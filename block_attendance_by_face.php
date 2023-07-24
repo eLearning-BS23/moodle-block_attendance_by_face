@@ -62,7 +62,8 @@ class block_attendance_by_face extends block_base {
         $this->content->footer = '';
 
         $templatecontext = [
-            'courses' => array_values($courses)
+            'courses' => array_values($courses),
+            'url' => new moodle_url('/blocks/attendance_by_face/manage.php')
         ];
 
         $this->content->text = $OUTPUT->render_from_template('block_attendance_by_face/pluginbody', $templatecontext);

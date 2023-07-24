@@ -1,0 +1,73 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_attendance_by_face/pluginbody
+    Example context (json):
+    {
+        
+    }
+}}
+
+<h1>{{ course_name }}</h1>
+
+<a class="btn btn-primary mb-5" href="{{ courselist_url }}">
+  {{#str}} course_list, block_attendance_by_face {{/str}}
+</a>
+<br>
+<a class="btn btn-primary mb-5" href="{{ attandancelist_url }}">
+  {{#str}} attendance_list, block_attendance_by_face {{/str}}
+</a>
+
+<table class="table table-hover" border="1" id="data_table">
+  <thead>
+    <tr>
+      <th class="bg-primary">{{#str}} student_name, block_attendance_by_face {{/str}}</th>
+      <th class="bg-primary">{{#str}} email, block_attendance_by_face {{/str}}</th>
+      <th class="bg-primary">{{#str}} preview, block_attendance_by_face {{/str}}</th>
+      <th class="bg-primary">{{#str}} action, block_attendance_by_face {{/str}}</th>
+      <th class="bg-primary">{{#str}} session_wise_attendance, block_attendance_by_face {{/str}}</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#studentlist}}
+    <tr>
+      <td>{{ firstname }} {{ lastname }}</td>
+      <td>{{ email }}</td>
+      <td>
+        {{#image_url}}
+        <img src="{{ image_url }}" width="150" height="auto" />
+        {{/image_url}}
+        {{^image_url}}
+        <p style="color: red">{{#str}} notifiy_upload_text, block_attendance_by_face {{/str}}</p>
+        {{/image_url}}
+      </td>
+      <td>
+        <a class="btn btn-primary" href="{{redirecturl}}?cid={{ courseid }}&id={{ id }}" >
+          {{#str}} upload_text, block_attendance_by_face {{/str}}
+        </a>
+      </td>
+      <td>
+        <select name="select" id="select-{{id}}" class="form-control" data-live-search="true">
+          <option value="">Select a session</option>
+          {{#sessions}} 
+              <option value="{{session_id}}">{{session_name}}</option>
+          {{/sessions}}
+        </select>
+        <button id="{{id}}" class="btn btn-primary give-attendance">Give Attendance</button>
+      </td>
+    </tr>
+    {{/studentlist}}
+  </tbody>
+  
+</table>
