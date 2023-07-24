@@ -31,7 +31,7 @@ $PAGE->set_url(new moodle_url('/blocks/attendance_by_face/manage.php'));
 $PAGE->set_context(\context_system::instance());
 $PAGE->set_title(get_string('manage_page_title', 'block_attendance_by_face'));
 
-if (!is_siteadmin() && !is_manager() && !is_coursecreator() && !is_teacher()) {
+if (!is_siteadmin() && !ismanager() && !iscoursecreator() && !isteacher()) {
     redirect($CFG->wwwroot, get_string('no_permission', 'block_attendance_by_face'), null, \core\output\notification::NOTIFY_ERROR);
 }
 

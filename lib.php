@@ -45,7 +45,7 @@ function block_participant_image_upload_get_image_url($studentid)
 /**
  * Checks if the current user is a manager.
  */
-function is_manager() {
+function ismanager() {
     global $DB, $USER;
     $roleid = $DB->get_field('role', 'id', ['shortname' => 'manager']);
     return $DB->record_exists('role_assignments', ['userid' => $USER->id, 'roleid' => $roleid]); 
@@ -54,7 +54,7 @@ function is_manager() {
 /**
  * Checks if the current user is a coursecreator.
  */
-function is_coursecreator() {
+function iscoursecreator() {
     global $DB, $USER;
     $roleid = $DB->get_field('role', 'id', ['shortname' => 'coursecreator']);
     return $DB->record_exists('role_assignments', ['userid' => $USER->id, 'roleid' => $roleid]); 
@@ -63,7 +63,7 @@ function is_coursecreator() {
 /**
  * Checks if the current user is an editing teacher in any of the courses.
  */
-function is_teacher() {
+function isteacher() {
     global $DB, $USER;
     $roleid = $DB->get_field('role', 'id', ['shortname' => 'editingteacher']);
     return $DB->record_exists('role_assignments', ['userid' => $USER->id, 'roleid' => $roleid]); 

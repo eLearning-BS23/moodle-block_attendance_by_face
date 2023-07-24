@@ -25,5 +25,5 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'block_attendance_by_face';
-$plugin->version = 2023072402;
+$plugin->version = 2023072401;
 $plugin->requires = 2020061500;
