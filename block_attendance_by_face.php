@@ -45,16 +45,86 @@ class block_attendance_by_face extends block_base {
             return $this->content;
         }
 
+        if(!$this->can_view()) {
+            $this->content = get_string('no_permission', 'block_attendance_by_face');
+            return $this->content;
+        }
+
+        global $USER;
+
+        if(is_siteadmin()) {
+            $courses = $this->get_all_visible_courses();
+        } else {
+            $courses = $this->get_enrolled_courselist_as_teacher($USER->id);
+        }
+
         $this->content = new stdClass();
         $this->content->footer = '';
 
-        $data = [
-            'title' => 'YOUR DATA GOES HERE'
+        $templatecontext = [
+            'courses' => array_values($courses)
         ];
 
-        $this->content->text = $OUTPUT->render_from_template('block_attendance_by_face/pluginbody', $data);
+        $this->content->text = $OUTPUT->render_from_template('block_attendance_by_face/pluginbody', $templatecontext);
 
         return $this->content;
+    }
+
+    /**
+     * Checks that the user can view this block or not.
+     * 
+     * @return boolean value true if can, false otherwise
+     */
+    public function can_view() {
+        global $DB, $USER;
+        $teacherroleid = $DB->get_field('role', 'id', ['shortname' => 'editingteacher']);
+        $coursecreatorroleid = $DB->get_field('role', 'id', ['shortname' => 'coursecreator']);
+        $managerroleid = $DB->get_field('role', 'id', ['shortname' => 'manager']);
+
+        $teachercap = $DB->record_exists('role_assignments', ['userid' => $USER->id, 'roleid' => $teacherroleid]);
+        $coursecreatorcap =  $DB->record_exists('role_assignments', ['userid' => $USER->id, 'roleid' => $coursecreatorroleid]);
+        $managercap = $DB->record_exists('role_assignments', ['userid' => $USER->id, 'roleid' => $managerroleid]);
+
+        if(is_siteadmin() || $teachercap || $managercap || $coursecreatorcap) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Gets all courses that user can view
+     */
+    public function get_all_visible_courses() {
+        global $DB;
+        $sql = "SELECT  c.id, c.fullname 
+                FROM {course} c
+                WHERE visible=1 AND c.id<>1";
+        $courses = $DB->get_records_sql($sql);
+        return $courses;
+    }
+
+    public function get_enrolled_courselist_as_teacher($userid) {
+        global $DB;
+        $sql = "SELECT c.fullname 'fullname', c.id
+                FROM {role_assignments} r
+                JOIN {user} u on r.userid = u.id
+                JOIN {role} rn on r.roleid = rn.id
+                JOIN {context} ctx on r.contextid = ctx.id
+                JOIN {course} c on ctx.instanceid = c.id
+                WHERE rn.shortname = 'editingteacher' and u.id=" . $userid;
+        $courselist = $DB->get_records_sql($sql);
+        return $courselist;
+    }
+
+    /**
+     * 
+     * Allow the block to have multiple instance
+     * 
+     * @return bool
+     */
+    function instance_allow_multiple() {
+        return false;
     }
 
     /**

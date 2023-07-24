@@ -19,4 +19,22 @@
     }
 }}
 
-{{#str}} courses, block_attendance_by_face {{/str}}
+<div>
+    <h6 class='text-center mt-2 mb-3'>
+        {{#str}} courses, block_attendance_by_face {{/str}}
+    </h6>
+</div>
+
+
+{{#courses}}
+    <div class='d-flex justify-content-between mb-3'>
+        <div class='d-flex align-items-center'>
+            {{fullname}}
+        </div>
+        <div>
+            <a class='btn btn-primary'>
+                {{#str}} students, block_attendance_by_face {{/str}}  
+            </a>
+        </div>
+    </div>  
+{{/courses}}

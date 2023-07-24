@@ -24,3 +24,5 @@
 
 $string['pluginname'] = 'Attendance By Face';
 $string['courses'] = 'Available Courses';
+$string['students'] = 'Students';
+$string['no_permission'] = 'You do not have enough permission to view this block';
