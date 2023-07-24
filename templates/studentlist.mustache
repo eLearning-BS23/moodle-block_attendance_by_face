@@ -19,9 +19,18 @@
     }
 }}
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/dataTables.bootstrap5.min.css">
+<script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.5/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.min.css" />
+
 <h1>{{ course_name }}</h1>
 
-<a class="btn btn-primary mb-5" href="{{ courselist_url }}">
+<a class="btn btn-primary mb-5 mt-5" href="{{ courselist_url }}">
   {{#str}} course_list, block_attendance_by_face {{/str}}
 </a>
 <br>
@@ -71,3 +80,17 @@
   </tbody>
   
 </table>
+
+{{#studentlist}} 
+  <script>
+    $(document).ready( function () {
+      $("#select-{{id}}").chosen();
+    });
+  </script>
+{{/studentlist}}
+
+<script>
+  $(document).ready( function () {
+      $('#data_table').DataTable();
+  } );
+</script>

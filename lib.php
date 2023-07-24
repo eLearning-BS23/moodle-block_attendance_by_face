@@ -22,22 +22,49 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
- function block_participant_image_upload_get_image_url($studentid)
- {
-     $context = context_system::instance();
+function block_participant_image_upload_get_image_url($studentid)
+{
+    $context = context_system::instance();
  
-     $fs = get_file_storage();
-     if ($files = $fs->get_area_files($context->id, 'local_participant_image_upload', 'student_photo')) {
+    $fs = get_file_storage();
+    if ($files = $fs->get_area_files($context->id, 'local_participant_image_upload', 'student_photo')) {
  
-         foreach ($files as $file) {
-             if ($studentid == $file->get_itemid() && $file->get_filename() != '.') {
-                 // Build the File URL. Long process! But extremely accurate.
-                 $fileurl = moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(), $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename(), true);
-                 // Display the image
-                 $download_url = $fileurl->get_port() ? $fileurl->get_scheme() . '://' . $fileurl->get_host() . $fileurl->get_path() . ':' . $fileurl->get_port() : $fileurl->get_scheme() . '://' . $fileurl->get_host() . $fileurl->get_path();
-                 return $download_url;
-             }
-         }
-     }
-     return false;
- }
+        foreach ($files as $file) {
+            if ($studentid == $file->get_itemid() && $file->get_filename() != '.') {
+                // Build the File URL. Long process! But extremely accurate.
+                $fileurl = moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(), $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename(), true);
+                // Display the image
+                $download_url = $fileurl->get_port() ? $fileurl->get_scheme() . '://' . $fileurl->get_host() . $fileurl->get_path() . ':' . $fileurl->get_port() : $fileurl->get_scheme() . '://' . $fileurl->get_host() . $fileurl->get_path();
+                return $download_url;
+            }
+        }
+    }
+    return false;
+}
+
+/**
+ * Checks if the current user is a manager.
+ */
+function is_manager() {
+    global $DB, $USER;
+    $roleid = $DB->get_field('role', 'id', ['shortname' => 'manager']);
+    return $DB->record_exists('role_assignments', ['userid' => $USER->id, 'roleid' => $roleid]); 
+}
+
+/**
+ * Checks if the current user is a coursecreator.
+ */
+function is_coursecreator() {
+    global $DB, $USER;
+    $roleid = $DB->get_field('role', 'id', ['shortname' => 'coursecreator']);
+    return $DB->record_exists('role_assignments', ['userid' => $USER->id, 'roleid' => $roleid]); 
+}
+
+/**
+ * Checks if the current user is an editing teacher in any of the courses.
+ */
+function is_teacher() {
+    global $DB, $USER;
+    $roleid = $DB->get_field('role', 'id', ['shortname' => 'editingteacher']);
+    return $DB->record_exists('role_assignments', ['userid' => $USER->id, 'roleid' => $roleid]); 
+}
