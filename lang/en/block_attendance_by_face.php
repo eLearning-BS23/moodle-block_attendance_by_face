@@ -15,15 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version metadata for the block_pluginname plugin.
+ * Languages configuration for the block_pluginname plugin.
  *
  * @package   block_attendance_by_face
  * @copyright 2023, Brain Station 23 
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->component = 'block_attendance_by_face';
-$plugin->version = 2023072401;
-$plugin->requires = 2020061500;
+$string['pluginname'] = 'Attendance By Face';
+$string['courses'] = 'Available Courses';
