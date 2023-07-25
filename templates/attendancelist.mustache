@@ -1,0 +1,127 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_attendance_by_face/attendancelist
+    Example context (json):
+    {
+        
+    }
+}}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.js" integrity="sha512-n/4gHW3atM3QqRcbCn6ewmpxcLAHGaDjpEBu4xZd47N0W2oQ+6q7oc3PXstrJYXcbNU1OHdQ1T7pAP+gi5Yu8g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<!-- Datatables library -->
+<link rel="stylesheet" type="text/css" href="./thirdpartylibs/DataTables/datatables.css">
+<script type="text/javascript" charset="utf8" src="./thirdpartylibs/DataTables/datatables.js"></script>
+
+<!-- Moment.js  -->
+<script src="./thirdpartylibs/momentjs/moment-with-locales.min.js"  crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<!-- Bootstrap datetime picker library -->
+<link rel="stylesheet" href="./thirdpartylibs/Date-Time-Picker-Bootstrap-4/build/css/bootstrap-datetimepicker.css">
+<script src="./thirdpartylibs/Date-Time-Picker-Bootstrap-4/build/js/bootstrap-datetimepicker.min.js"></script>
+  
+
+<h1>{{ course_name }}</h1>
+
+<a class="btn btn-primary mb-5 mt-5" href="{{ courselist_url }}">
+  {{#str}} course_list, block_attendance_by_face {{/str}}
+</a>
+
+<br>
+
+<a class="btn btn-primary mb-5" href="{{ studentlist_url }}">
+  {{#str}} student_list, block_attendance_by_face {{/str}}
+</a>
+
+<div class="d-flex" style="width: 70%;">
+  <label for="from_date" class="mt-auto pr-2">From: </label>
+  <input type="text" class="form-control" id="from_date" placeholder="Select a date">
+  <label for="to_date" class="mt-auto px-2">To: </label>
+  <input type="text" class="form-control" id="to_date" placeholder="Select a date">
+
+  <div class="form-check form-check-inline ml-3">
+    <input class="form-check-input" type="radio" name="sortOrder" id="asc" value="ASC">
+    <label class="form-check-label" for="asc">Ascending</label>
+  </div>
+  <div class="form-check form-check-inline">
+    <input class="form-check-input" type="radio" name="sortOrder" id="desc" value="DESC">
+    <label class="form-check-label" for="desc">Descending</label>
+  </div>
+
+  <button class="btn btn-primary ml-3" id="date_check">
+      {{#str}} check, block_attendance_by_face {{/str}}
+  </button>
+</div>
+<script>
+  $(function () {
+      $('#from_date').datetimepicker();
+      $('#to_date').datetimepicker();
+      
+  });
+</script>
+
+
+<table class="table table-hover" border="1" id="data_table">
+  <thead>
+    <tr>
+    <th class="bg-primary">{{#str}} time, block_attendance_by_face {{/str}}</th>
+      
+      <th class="bg-primary">{{#str}} session_id, block_attendance_by_face {{/str}}</th>
+      <th class="bg-primary">{{#str}} session_name, block_attendance_by_face {{/str}}</th>
+      <th class="bg-primary">{{#str}} student_name, block_attendance_by_face {{/str}}</th>
+      <th class="bg-primary">{{#str}} email, block_attendance_by_face {{/str}}</th>
+      <th class="bg-primary">{{#str}} attendance_text, block_attendance_by_face {{/str}}</th>
+      
+    </tr>
+  </thead>
+  <hr />
+  <tbody>
+    {{#studentlist}}
+    <tr>
+        <td> 
+          {{#time}}
+                {{timedate}}
+            {{/time}}
+            {{^time}}
+                N/A
+            {{/time}}
+        </td>
+        <td> {{ session_id }} </td>
+        <td> {{ session_name }} </td>
+        <td>{{ firstname }} {{ lastname }}</td>
+        <td>{{ email }} </td>
+        <td>
+            {{#time}}
+                <b style="color:green;">{{#str}} present, block_attendance_by_face {{/str}}</b>
+            {{/time}}
+            {{^time}}
+                <b>{{#str}} absent, block_attendance_by_face {{/str}}</b>
+            {{/time}}
+        </td>
+      </td>
+    </tr>
+    {{/studentlist}}
+  </tbody>
+  
+</table>
+
+<script>
+$(document).ready( function () {
+    $('#data_table').DataTable({
+      order: [[1, '{{flag}}']],
+    });
+} );
+</script>
+

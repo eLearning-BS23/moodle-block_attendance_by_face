@@ -54,11 +54,11 @@ $studentdata = $DB->get_records_sql($sql);
 
 // Check if there is any active session and the student is present or not.
 foreach($studentdata as $student) {
-    $activesession = $DB->get_record('local_piu_window', array('course_id' => $courseid, 'active' => 1));
+    $activesession = $DB->get_record('block_attendance_piu_window', array('course_id' => $courseid, 'active' => 1));
     if($activesession) {
         $student->session = true;
         $student->session_id = $activesession->session_id;
-        $record = $DB->get_record('block_face_recog_attendance', array('student_id' => $student->id, 'session_id' => $activesession->session_id));
+        $record = $DB->get_record('block_attendance_fc_recog', array('student_id' => $student->id, 'session_id' => $activesession->session_id));
         if($record) {
             $student->present = true;
         } else {
@@ -77,23 +77,23 @@ foreach ($studentdata as $student) {
     $student->image_url = block_participant_image_upload_get_image_url($student->id);
 }
 
-$sessions = $DB->get_records('local_piu_window', array('course_id' => $courseid), 'session_id DESC');
+$sessions = $DB->get_records('block_attendance_piu_window', array('course_id' => $courseid), 'session_id DESC');
 
 $templatecontext = (object)[
     'course_name' => $coursename->fullname,
     'courseid' => $courseid,
-    'courselist_url' => new moodle_url("/local/participant_image_upload/courselist.php?cid=" . $courseid),
-    'attandancelist_url' => new moodle_url("/local/participant_image_upload/attendancelist.php?cid=" . $courseid),
+    'courselist_url' => new moodle_url("/blocks/attendance_by_face/courselist.php?cid=" . $courseid),
+    'attandancelist_url' => new moodle_url("/blocks/attendance_by_face/attendancelist.php?cid=" . $courseid),
     'studentlist' => array_values($studentdata),
-    'redirecturl' => new moodle_url('/local/participant_image_upload/upload_image.php'),
-    'actionurl' => $CFG->wwwroot . '/local/participant_image_upload/submitattendance.php',
-    'load_data_url' => $CFG->wwwroot . '/local/participant_image_upload/load_data.php',
+    'redirecturl' => new moodle_url('/blocks/attendance_by_face/upload_image.php'),
+    'actionurl' => $CFG->wwwroot . '/blocks/attendance_by_face/submitattendance.php',
+    'load_data_url' => $CFG->wwwroot . '/blocks/attendance_by_face/load_data.php',
     'sessions' => array_values($sessions),
     'number_of_students' => count($studentdata),
 ];
 
-$PAGE->requires->js_call_amd('local_participant_image_upload/dropdown_handler', 'init', array(
-    $CFG->wwwroot . "/local/participant_image_upload/submitattendance.php" . "?cid=" . $courseid
+$PAGE->requires->js_call_amd('block_attendance_by_face/dropdown_handler', 'init', array(
+    $CFG->wwwroot . "/blocks/attendance_by_face/submitattendance.php" . "?cid=" . $courseid
 ));
 
 echo $OUTPUT->render_from_template('block_attendance_by_face/studentlist', $templatecontext);

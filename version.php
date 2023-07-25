@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version metadata for the block_pluginname plugin.
+ * Version metadata for the block_attendance_by_face plugin.
  *
  * @package   block_attendance_by_face
  * @copyright 2023, Brain Station 23 

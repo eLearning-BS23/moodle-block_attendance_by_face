@@ -68,3 +68,52 @@ function isteacher() {
     $roleid = $DB->get_field('role', 'id', ['shortname' => 'editingteacher']);
     return $DB->record_exists('role_assignments', ['userid' => $USER->id, 'roleid' => $roleid]); 
 }
+
+/**
+ * Returns the attendance list for a specfic course for a specific time range.
+ */
+function student_attandancelist($courseid, $from, $to, $sort) {
+    global $DB;
+
+    $sql = "SELECT DISTINCT session_id 
+    FROM {block_attendance_fc_recog}
+    WHERE ({block_attendance_fc_recog}.time > " . $from . " AND {block_attendance_fc_recog}.time < " . $to .")";
+    $sessionlist1 = $DB->get_records_sql($sql);
+
+    $sql = "SELECT session_id 
+    FROM {block_attendance_piu_window} 
+    WHERE {block_attendance_piu_window}.session_id > " . $from . " AND {block_attendance_piu_window}.session_id < " . $to . "
+        AND {block_attendance_piu_window}.session_id NOT IN (SELECT session_id FROM {block_attendance_fc_recog})";
+    $sessionlist2 = $DB->get_records_sql($sql);
+
+    $distintsessions = array();
+    foreach($sessionlist1 as $session) {
+        array_push($distintsessions, $session->session_id);
+    }
+    foreach($sessionlist2 as $session) {
+        array_push($distintsessions, $session->session_id);
+    }
+
+    $string = implode(", ", $distintsessions);
+    
+    if(empty($string)) {
+        $studentdata = array();
+        return $studentdata;
+    }
+ 
+    $sql = "SELECT {user}.id, {user}.username, {block_attendance_piu_window}.session_id, {block_attendance_piu_window}.session_name, {course}.id course_id, {block_attendance_fc_recog}.time, {user}.firstname, {user}.lastname, {user}.email
+        FROM {role_assignments}
+        JOIN {user} on {role_assignments}.userid = {user}.id
+        JOIN {role} on {role_assignments}.roleid = {role}.id
+        JOIN {context} on {role_assignments}.contextid = {context}.id
+        JOIN {course} on {context}.instanceid = {course}.id
+        LEFT JOIN {block_attendance_piu_window} on {course}.id = {block_attendance_piu_window}.course_id
+        LEFT JOIN {block_attendance_fc_recog} on {course}.id = {block_attendance_fc_recog}.course_id AND {user}.id = {block_attendance_fc_recog}.student_id AND {block_attendance_piu_window}.session_id = {block_attendance_fc_recog}.session_id
+        WHERE {role}.shortname = 'student' AND {course}.id=$courseid AND {block_attendance_piu_window}.session_id in 
+        (" . $string . ") 
+        GROUP BY {user}.id, {block_attendance_piu_window}.session_id
+        ORDER BY {block_attendance_piu_window}.session_id " . $sort;
+
+    $studentdata = $DB->get_recordset_sql($sql);
+    return $studentdata;
+}
