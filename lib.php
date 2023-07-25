@@ -117,3 +117,71 @@ function student_attandancelist($courseid, $from, $to, $sort) {
     $studentdata = $DB->get_recordset_sql($sql);
     return $studentdata;
 }
+
+/**
+ * Returns the courselist of a user where the user is enrolled as a teacher.
+ */
+function get_enrolled_courselist_as_teacher($userid) {
+    global $DB;
+    $sql = "SELECT lpw.id, c.fullname 'fullname', c.id, lpw.session_id, lpw.active active
+                FROM {role_assignments} r
+                JOIN {user} u on r.userid = u.id
+                JOIN {role} rn on r.roleid = rn.id
+                JOIN {context} ctx on r.contextid = ctx.id
+                JOIN {course} c on ctx.instanceid = c.id
+                LEFT JOIN {block_attendance_piu_window} lpw on c.id = lpw.course_id  and lpw.active=1
+                WHERE rn.shortname = 'editingteacher' and u.id=" . $userid;
+    $courselist = $DB->get_records_sql($sql);
+    return $courselist;
+}
+
+/**
+ * Create a new active session or stops a active session.
+ */
+function toggle_window($courseid, $changedby, $sessionid, $active) {
+    global $DB;
+    if ($active) {
+        $record = new stdClass();
+        $record->course_id = $courseid;
+        $record->active = $active;
+        $record->session_id = time();
+        $record->session_name = get_session_name($courseid);
+        $record->changedby = $changedby;
+
+        $DB->insert_record('block_attendance_piu_window', $record);
+
+        return $record->session_id;
+    } else {
+        $record = $DB->get_record('block_attendance_piu_window', array('course_id' => $courseid, 'session_id' => $sessionid));
+
+        $record->active = $active;
+        $record->changedby = $changedby;
+
+        $DB->update_record('block_attendance_piu_window', $record);
+    }
+}
+
+/**
+ * Prepares and returns a session name for a course according to the convention.
+ * 
+ * Session name: C{courseid}-y/m/d-{nth_session_of_today} (eg. C100-2022/08/01-01, C100-2022/08/01-02)
+ */
+function get_session_name($courseid) {
+    global $DB;
+    // Get the total number of sessions of the specific course for today.
+
+    // Setting default timezone.
+    date_default_timezone_set('Asia/Dhaka');
+    $t1 = mktime(0, 0, 0);
+    $t2 = mktime(23, 59, 59);
+
+    $sql = "SELECT * FROM {block_attendance_piu_window} 
+            WHERE {block_attendance_piu_window}.session_id > $t1 AND {block_attendance_piu_window}.session_id < $t2";
+
+    $records = $DB->get_records_sql($sql);
+    $count = count($records) + 1;
+    
+    // Prepare session name.
+    $session_name = "C" . $courseid . "-" . date('Y/m/d', strtotime('now')) . "-" . $count;
+    return $session_name;
+}
