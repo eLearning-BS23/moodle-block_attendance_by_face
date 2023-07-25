@@ -31,9 +31,9 @@ $session_id = optional_param("session", 0, PARAM_INT);
 $active = optional_param("active", 0, PARAM_INT);
 
 if ($active) {
-    toggle_window($course_id, $USER->id, $session_id, 1);
+    block_toggle_window($course_id, $USER->id, $session_id, 1);
     redirect(new moodle_url('/blocks/attendance_by_face/courselist.php'), get_string('start_text', 'block_attendance_by_face'));
 } else {
-    toggle_window($course_id, $USER->id, $session_id, 0);
+    block_toggle_window($course_id, $USER->id, $session_id, 0);
     redirect(new moodle_url('/blocks/attendance_by_face/courselist.php'), get_string('stop_text', 'block_attendance_by_face'));
 }

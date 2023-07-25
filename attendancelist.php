@@ -29,7 +29,7 @@ $PAGE->set_url(new moodle_url('/blocks/attendance_by_face/attendancelist.php'));
 $PAGE->set_context(\context_system::instance());
 $PAGE->set_title(get_string('attendance_list_title', 'block_attendance_by_face'));
 
-if (!is_siteadmin() && !ismanager() && !iscoursecreator()  && !isteacher()) {
+if (!is_siteadmin() && !block_is_manager() && !block_is_coursecreator()  && !block_is_teacher()) {
     redirect($CFG->wwwroot, get_string('no_permission', 'block_attendance_by_face'), null, \core\output\notification::NOTIFY_ERROR);
 }
 
@@ -49,7 +49,7 @@ if ($courseid == 0) {
 }
 
 global $DB, $PAGE;
-$studentdata = student_attandancelist($courseid, $from, $to, $sort);
+$studentdata = block_student_attandancelist($courseid, $from, $to, $sort);
 
 $students = [];
 

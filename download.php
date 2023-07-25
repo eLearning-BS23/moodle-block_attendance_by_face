@@ -26,7 +26,7 @@ require_once(__DIR__ . '/../../config.php');
 require_once('lib.php');
 
 require_login();
-if (!is_siteadmin() && !ismanager() && !iscoursecreator()  && !isteacher()) {
+if (!is_siteadmin() && !block_is_manager() && !block_is_coursecreator()  && !block_is_teacher()) {
     redirect($CFG->wwwroot, get_string('no_permission', 'block_attendance_by_face'), null, \core\output\notification::NOTIFY_ERROR);
 }
 
@@ -41,7 +41,7 @@ if ($courseid == 0) {
     redirect($CFG->wwwroot, get_string('no_course_selected', 'block_attendance_by_face'), null, \core\output\notification::NOTIFY_WARNING);
 }
 
-$studentdata = student_attandancelist($courseid, $from, $to, $sort);
+$studentdata = block_student_attandancelist($courseid, $from, $to, $sort);
 
 // foreach($studentdata as $student) {
 //     if($student->time) {

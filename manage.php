@@ -31,7 +31,7 @@ $PAGE->set_url(new moodle_url('/blocks/attendance_by_face/manage.php'));
 $PAGE->set_context(\context_system::instance());
 $PAGE->set_title(get_string('manage_page_title', 'block_attendance_by_face'));
 
-if (!is_siteadmin() && !ismanager() && !iscoursecreator() && !isteacher()) {
+if (!is_siteadmin() && !block_is_manager() && !block_is_coursecreator() && !block_is_teacher()) {
     redirect($CFG->wwwroot, get_string('no_permission', 'block_attendance_by_face'), null, \core\output\notification::NOTIFY_ERROR);
 }
 
@@ -74,7 +74,7 @@ $coursename = $DB->get_record_select('course', 'id=:cid', array('cid' => $course
 echo $OUTPUT->header();
 
 foreach ($studentdata as $student) {
-    $student->image_url = block_participant_image_upload_get_image_url($student->id);
+    $student->image_url = block_attendance_get_image_url($student->id);
 }
 
 $sessions = $DB->get_records('block_attendance_piu_window', array('course_id' => $courseid), 'session_id DESC');

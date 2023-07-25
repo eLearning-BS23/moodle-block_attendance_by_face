@@ -22,7 +22,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-function block_participant_image_upload_get_image_url($studentid)
+function block_attendance_get_image_url($studentid)
 {
     $context = context_system::instance();
  
@@ -45,7 +45,7 @@ function block_participant_image_upload_get_image_url($studentid)
 /**
  * Checks if the current user is a manager.
  */
-function ismanager() {
+function block_is_manager() {
     global $DB, $USER;
     $roleid = $DB->get_field('role', 'id', ['shortname' => 'manager']);
     return $DB->record_exists('role_assignments', ['userid' => $USER->id, 'roleid' => $roleid]); 
@@ -54,7 +54,7 @@ function ismanager() {
 /**
  * Checks if the current user is a coursecreator.
  */
-function iscoursecreator() {
+function block_is_coursecreator() {
     global $DB, $USER;
     $roleid = $DB->get_field('role', 'id', ['shortname' => 'coursecreator']);
     return $DB->record_exists('role_assignments', ['userid' => $USER->id, 'roleid' => $roleid]); 
@@ -63,7 +63,7 @@ function iscoursecreator() {
 /**
  * Checks if the current user is an editing teacher in any of the courses.
  */
-function isteacher() {
+function block_is_teacher() {
     global $DB, $USER;
     $roleid = $DB->get_field('role', 'id', ['shortname' => 'editingteacher']);
     return $DB->record_exists('role_assignments', ['userid' => $USER->id, 'roleid' => $roleid]); 
@@ -72,7 +72,7 @@ function isteacher() {
 /**
  * Returns the attendance list for a specfic course for a specific time range.
  */
-function student_attandancelist($courseid, $from, $to, $sort) {
+function block_student_attandancelist($courseid, $from, $to, $sort) {
     global $DB;
 
     $sql = "SELECT DISTINCT session_id 
@@ -121,7 +121,7 @@ function student_attandancelist($courseid, $from, $to, $sort) {
 /**
  * Returns the courselist of a user where the user is enrolled as a teacher.
  */
-function get_enrolled_courselist_as_teacher($userid) {
+function block_get_enrolled_courselist_as_teacher($userid) {
     global $DB;
     $sql = "SELECT lpw.id, c.fullname 'fullname', c.id, lpw.session_id, lpw.active active
                 FROM {role_assignments} r
@@ -138,14 +138,14 @@ function get_enrolled_courselist_as_teacher($userid) {
 /**
  * Create a new active session or stops a active session.
  */
-function toggle_window($courseid, $changedby, $sessionid, $active) {
+function block_toggle_window($courseid, $changedby, $sessionid, $active) {
     global $DB;
     if ($active) {
         $record = new stdClass();
         $record->course_id = $courseid;
         $record->active = $active;
         $record->session_id = time();
-        $record->session_name = get_session_name($courseid);
+        $record->session_name = block_get_session_name($courseid);
         $record->changedby = $changedby;
 
         $DB->insert_record('block_attendance_piu_window', $record);
@@ -166,7 +166,7 @@ function toggle_window($courseid, $changedby, $sessionid, $active) {
  * 
  * Session name: C{courseid}-y/m/d-{nth_session_of_today} (eg. C100-2022/08/01-01, C100-2022/08/01-02)
  */
-function get_session_name($courseid) {
+function block_get_session_name($courseid) {
     global $DB;
     // Get the total number of sessions of the specific course for today.
 
@@ -189,7 +189,7 @@ function get_session_name($courseid) {
 /**
  * Checks if the users is present or not in a specific session of a course.
  */
-function attendance_status($courseid, $studentid, $sessionid) {
+function block_attendance_status($courseid, $studentid, $sessionid) {
     global $DB;
 
     return $DB->record_exists('block_attendance_fc_recog', array(
@@ -202,7 +202,7 @@ function attendance_status($courseid, $studentid, $sessionid) {
 /**
  * Submits attendance. 
  */
-function student_attendance_update($courseid, $studentid, $sessionid) {
+function block_student_attendance_update($courseid, $studentid, $sessionid) {
     global $DB;
 
     $record = new stdClass();

@@ -32,10 +32,10 @@ $sessionid = optional_param("session_id", 0, PARAM_INT);
 
 if($studentid && $courseid && $sessionid) {
     // Check attendance at first.
-    if(attendance_status($courseid, $studentid, $sessionid)) {
+    if(block_attendance_status($courseid, $studentid, $sessionid)) {
         redirect(new moodle_url('/blocks/attendance_by_face/manage.php?cid=' . $courseid), get_string('attendance_already_given', 'block_attendance_by_face'), null, \core\output\notification::NOTIFY_ERROR);
     } else {
-        student_attendance_update($courseid, $studentid, $sessionid);
+        block_student_attendance_update($courseid, $studentid, $sessionid);
         redirect(new moodle_url('/blocks/attendance_by_face/manage.php?cid=' . $courseid), get_string('attendance_given', 'block_attendance_by_face'));
     }
 } else {

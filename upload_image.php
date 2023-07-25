@@ -32,7 +32,7 @@ $PAGE->set_title(get_string('title_upload', 'block_attendance_by_face'));
 
 require_login();
 
-if (!is_siteadmin() && !ismanager() && !iscoursecreator() && !isteacher()) {
+if (!is_siteadmin() && !block_is_manager() && !block_is_coursecreator() && !block_is_teacher()) {
     redirect($CFG->wwwroot, get_string('no_permission', 'block_attendance_by_face'), null, \core\output\notification::NOTIFY_ERROR);
 }
 
