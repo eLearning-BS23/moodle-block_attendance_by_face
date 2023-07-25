@@ -26,8 +26,8 @@ require_once(__DIR__ . '/../../config.php');
 require_once('lib.php');
 
 require_login();
-if (!is_siteadmin() && !is_manager() && !is_coursecreator()  && !is_teacher()) {
-    redirect($CFG->wwwroot, get_string('no_permission', 'local_participant_image_upload'), null, \core\output\notification::NOTIFY_ERROR);
+if (!is_siteadmin() && !ismanager() && !iscoursecreator()  && !isteacher()) {
+    redirect($CFG->wwwroot, get_string('no_permission', 'block_attendance_by_face'), null, \core\output\notification::NOTIFY_ERROR);
 }
 
 $courseid = optional_param('cid', 0, PARAM_INT);
@@ -38,7 +38,7 @@ $sort = optional_param('sort', 'ASC', PARAM_RAW);
 $dataformat = optional_param('dataformat', '', PARAM_ALPHA);
 
 if ($courseid == 0) {
-    redirect($CFG->wwwroot, get_string('no_course_selected', 'local_participant_image'), null, \core\output\notification::NOTIFY_WARNING);
+    redirect($CFG->wwwroot, get_string('no_course_selected', 'block_attendance_by_face'), null, \core\output\notification::NOTIFY_WARNING);
 }
 
 $studentdata = student_attandancelist($courseid, $from, $to, $sort);

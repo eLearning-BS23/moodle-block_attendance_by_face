@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Languages configuration for the block_pluginname plugin.
+ * Languages configuration for the block_attendance_by_face plugin.
  *
  * @package   block_attendance_by_face
  * @copyright 2023, Brain Station 23 
@@ -56,3 +56,7 @@ $string['start'] = 'Start';
 $string['stop'] = 'Stop';
 $string['start_text'] = 'Session started!';
 $string['stop_text'] = 'Session stopped!';
+$string['attendance_given'] = 'Attendance given';
+$string['attendance_already_given'] = 'Attendance already given.';
+$string['attendance_error'] = 'Attendance error. Try selecting correct session name';
+$string['title_upload'] = 'Upload Student image';

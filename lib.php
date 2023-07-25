@@ -27,7 +27,7 @@ function block_participant_image_upload_get_image_url($studentid)
     $context = context_system::instance();
  
     $fs = get_file_storage();
-    if ($files = $fs->get_area_files($context->id, 'local_participant_image_upload', 'student_photo')) {
+    if ($files = $fs->get_area_files($context->id, 'block_attendance_by_face', 'student_photo')) {
  
         foreach ($files as $file) {
             if ($studentid == $file->get_itemid() && $file->get_filename() != '.') {
@@ -184,4 +184,32 @@ function get_session_name($courseid) {
     // Prepare session name.
     $session_name = "C" . $courseid . "-" . date('Y/m/d', strtotime('now')) . "-" . $count;
     return $session_name;
+}
+
+/**
+ * Checks if the users is present or not in a specific session of a course.
+ */
+function attendance_status($courseid, $studentid, $sessionid) {
+    global $DB;
+
+    return $DB->record_exists('block_attendance_fc_recog', array(
+                    'course_id' => $courseid,
+                    'student_id' => $studentid,
+                    'session_id' => $sessionid
+                ));
+}
+
+/**
+ * Submits attendance. 
+ */
+function student_attendance_update($courseid, $studentid, $sessionid) {
+    global $DB;
+
+    $record = new stdClass();
+    $record->student_id = $studentid;
+    $record->course_id = $courseid;
+    $record->session_id = $sessionid;
+    $record->time = time();
+        
+    $DB->insert_record('block_attendance_fc_recog', $record);
 }
