@@ -91,18 +91,18 @@ if (empty($student->id)) {
     $student->context_id = $context->id;
 }
 
-$draftitemid = file_get_submitted_draft_itemid('student_photo');
+$draftitemid = file_get_submitted_draft_itemid('block_student_photo');
 
 file_prepare_draft_area(
     $draftitemid,
     $context->id,
     'block_attendance_by_face',
-    'student_photo',
+    'block_student_photo',
     $student->id,
     array('subdirs' => 0, 'maxfiles' => 1)
 );
 
-$student->student_photo = $draftitemid;
+$student->block_student_photo = $draftitemid;
 
 $mform->set_data($student);
 
