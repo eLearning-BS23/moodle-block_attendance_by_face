@@ -44,7 +44,7 @@ class imageupload_form extends moodleform
 
         $mform->addElement(
             'filemanager',
-            'student_photo',
+            'block_student_photo',
             'image',
             null,
             array(

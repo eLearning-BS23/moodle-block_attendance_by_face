@@ -49,17 +49,17 @@ if ($mform->is_cancelled()) {
 } else if ($data = $mform->get_data()) {
     // ... store or update $student
     file_save_draft_area_files(
-        $data->student_photo,
+        $data->block_student_photo,
         $data->context_id,
         'block_attendance_by_face',
-        'student_photo',
+        'block_student_photo',
         $data->id,
         array('subdirs' => 0, 'maxfiles' => 50)
     );
 
     if ($DB->record_exists_select('block_attendance_piu', 'student_id = :id', array('id' => $data->id))) {
         $record = $DB->get_record_select('block_attendance_piu', 'student_id = :id', array('id' => $data->id));
-        $record->photo_draft_id = $data->student_photo;
+        $record->photo_draft_id = $data->block_student_photo;
         $record->course_id = $data->course;
         $DB->update_record('block_attendance_piu', $record);
         redirect($CFG->wwwroot . '/blocks/attendance_by_face/manage.php?cid=' . $data->course, 'Image updated', null, \core\output\notification::NOTIFY_SUCCESS);
@@ -67,7 +67,7 @@ if ($mform->is_cancelled()) {
         $record = new stdClass;
         $record->student_id = $data->id;
         $record->course_id = $data->course;
-        $record->photo_draft_id = $data->student_photo;
+        $record->photo_draft_id = $data->block_student_photo;
         $DB->insert_record('block_attendance_piu', $record);
         redirect($CFG->wwwroot . '/blocks/attendance_by_face/manage.php?cid=' . $data->course, 'Image updated', null, \core\output\notification::NOTIFY_SUCCESS);
     }

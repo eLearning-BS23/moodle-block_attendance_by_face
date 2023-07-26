@@ -173,7 +173,7 @@ class block_attendance_by_face extends block_base {
                 JOIN {role} rn on r.roleid = rn.id
                 JOIN {context} ctx on r.contextid = ctx.id
                 JOIN {course} c on ctx.instanceid = c.id
-                JOIN {local_piu_window} lpiu on c.id = lpiu.course_id
+                JOIN {block_attendance_piu_window} lpiu on c.id = lpiu.course_id
                 WHERE rn.shortname = 'student'  and lpiu.active = 1 and u.id=" . $userid;
         $courselist = $DB->get_records_sql($sql);
         return $courselist;

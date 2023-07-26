@@ -27,7 +27,7 @@ function block_attendance_get_image_url($studentid)
     $context = context_system::instance();
  
     $fs = get_file_storage();
-    if ($files = $fs->get_area_files($context->id, 'block_attendance_by_face', 'student_photo')) {
+    if ($files = $fs->get_area_files($context->id, 'block_attendance_by_face', 'block_student_photo')) {
  
         foreach ($files as $file) {
             if ($studentid == $file->get_itemid() && $file->get_filename() != '.') {
