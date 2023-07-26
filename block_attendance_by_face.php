@@ -45,28 +45,66 @@ class block_attendance_by_face extends block_base {
             return $this->content;
         }
 
-        if(!$this->can_view()) {
-            $this->content = get_string('no_permission', 'block_attendance_by_face');
-            return $this->content;
-        }
+        if ($this->block_is_student()) {
+            global $USER, $DB;
+            $courses = $this->get_enrolled_courselist_with_active_window($USER->id);
 
-        global $USER;
-
-        if(is_siteadmin()) {
-            $courses = $this->get_all_visible_courses();
+            $attendancedonetxt = get_string('attendance_done', 'block_attendance_by_face');
+            $attendancebuttontxt = get_string('attendance_button', 'block_attendance_by_face');
+            $attendancebuttontitle = get_string('attendance_button_title', 'block_attendance_by_face');
+            
+            $this->content = new stdClass;
+            $this->content->text = '<hr>';
+    
+            //$today = mktime(0, 0, 0, date("m"), date("d"), date("Y"));
+            foreach ($courses as $course) {
+                $done = $DB->get_record("block_attendance_fc_recog", array('student_id' => $USER->id, 'course_id' => $course->cid, 'session_id' => $course->session_id));
+                if (!$done) {
+                    $this->content->text .= "
+                    <div class='d-flex justify-content-between mb-3'>
+                        <div class='d-flex align-items-center'>" . $course->fullname . "</div>
+                        <div>
+                            <button 
+                                type='button' 
+                                id='" . $course->cid . "' 
+                                class='action-modal btn btn-primary' 
+                                title='". $attendancebuttontitle . "'>
+                                ". $attendancebuttontxt ."
+                            </button>
+                        </div>
+                    </div>
+                    <hr>
+                    ";
+                } 
+            }
+            $successmessage = get_config('block_attendance_by_face', 'successmessage');
+            $failedmessage = get_config('block_attendance_by_face', 'failedmessage');
+            $threshold = get_config('block_attendance_by_face', 'threshold');
+            $this->page->requires->js_call_amd('block_attendance_by_face/attendance_modal', 'init', array($USER->id, $successmessage, $failedmessage, $threshold));
         } else {
-            $courses = $this->get_enrolled_courselist_as_teacher($USER->id);
+            if(!$this->can_view()) {
+                $this->content = get_string('no_permission', 'block_attendance_by_face');
+                return $this->content;
+            }
+
+            global $USER;
+
+            if(is_siteadmin()) {
+                $courses = $this->get_all_visible_courses();
+            } else {
+                $courses = $this->get_enrolled_courselist_as_teacher($USER->id);
+            }
+
+            $this->content = new stdClass();
+            $this->content->footer = '';
+
+            $templatecontext = [
+                'courses' => array_values($courses),
+                'url' => new moodle_url('/blocks/attendance_by_face/manage.php')
+            ];
+
+            $this->content->text = $OUTPUT->render_from_template('block_attendance_by_face/pluginbody', $templatecontext);
         }
-
-        $this->content = new stdClass();
-        $this->content->footer = '';
-
-        $templatecontext = [
-            'courses' => array_values($courses),
-            'url' => new moodle_url('/blocks/attendance_by_face/manage.php')
-        ];
-
-        $this->content->text = $OUTPUT->render_from_template('block_attendance_by_face/pluginbody', $templatecontext);
 
         return $this->content;
     }
@@ -94,6 +132,15 @@ class block_attendance_by_face extends block_base {
     }
 
     /**
+     * Checks if the current user is an editing teacher in any of the courses.
+     */
+    function block_is_student() {
+        global $DB, $USER;
+        $roleid = $DB->get_field('role', 'id', ['shortname' => 'student']);
+        return $DB->record_exists('role_assignments', ['userid' => $USER->id, 'roleid' => $roleid]); 
+    }
+
+    /**
      * Gets all courses that user can view
      */
     public function get_all_visible_courses() {
@@ -114,6 +161,20 @@ class block_attendance_by_face extends block_base {
                 JOIN {context} ctx on r.contextid = ctx.id
                 JOIN {course} c on ctx.instanceid = c.id
                 WHERE rn.shortname = 'editingteacher' and u.id=" . $userid;
+        $courselist = $DB->get_records_sql($sql);
+        return $courselist;
+    }
+
+    function get_enrolled_courselist_with_active_window($userid) {
+        global $DB;
+        $sql = "SELECT c.fullname 'fullname', c.id 'cid', lpiu.session_id
+                FROM {role_assignments} r
+                JOIN {user} u on r.userid = u.id
+                JOIN {role} rn on r.roleid = rn.id
+                JOIN {context} ctx on r.contextid = ctx.id
+                JOIN {course} c on ctx.instanceid = c.id
+                JOIN {local_piu_window} lpiu on c.id = lpiu.course_id
+                WHERE rn.shortname = 'student'  and lpiu.active = 1 and u.id=" . $userid;
         $courselist = $DB->get_records_sql($sql);
         return $courselist;
     }
