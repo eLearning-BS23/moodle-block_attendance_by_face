@@ -24,17 +24,15 @@
 
 function block_attendance_get_image_url($studentid)
 {
-    $context = context_system::instance();
+    global $CFG, $DB;
+    $context = 5;
  
     $fs = get_file_storage();
-    if ($files = $fs->get_area_files($context->id, 'block_attendance_by_face', 'block_student_photo')) {
- 
+    if ($files = $fs->get_area_files($context, 'user', 'draft')) {
+        $record = $DB->get_record('block_attendance_piu', array('student_id' => $studentid));
         foreach ($files as $file) {
-            if ($studentid == $file->get_itemid() && $file->get_filename() != '.') {
-                // Build the File URL. Long process! But extremely accurate.
-                $fileurl = moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(), $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename(), true);
-                // Display the image
-                $download_url = $fileurl->get_port() ? $fileurl->get_scheme() . '://' . $fileurl->get_host() . $fileurl->get_path() . ':' . $fileurl->get_port() : $fileurl->get_scheme() . '://' . $fileurl->get_host() . $fileurl->get_path();
+            if ($file->get_itemid() == $record->photo_draft_id && $file->get_filename() != ".") {
+                $download_url = $CFG->wwwroot . "/draftfile.php/" . $context . "/user/draft/" . $record->photo_draft_id . "/" . $file->get_filename() . "?preview=thumb&oid=" . $file->get_timemodified();
                 return $download_url;
             }
         }
