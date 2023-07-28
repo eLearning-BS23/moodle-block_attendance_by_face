@@ -22,17 +22,66 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+/**
+ * Serve the files.
+ *
+ * @param stdClass $course the course object.
+ * @param stdClass $cm the course module object.
+ * @param context $context the context.
+ * @param string $filearea the name of the file area.
+ * @param array $args extra arguments (itemid, path, filename).
+ * @param bool $forcedownload whether or not force download.
+ * @param array $options additional options affecting the file serving.
+ * @return bool false if the file not found, just send the file otherwise and do not return anything.
+ */
+function block_attendance_by_face_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array())
+{
+    global $DB;
+
+    if ($context->contextlevel != CONTEXT_SYSTEM) {
+        return false;
+    }
+
+    require_login();
+
+    if ($filearea != 'block_student_photo') {
+        return false;
+    }
+
+    $itemid = (int)array_shift($args);
+
+    $fs = get_file_storage();
+
+    $filename = array_pop($args);
+    if (empty($args)) {
+        $filepath = '/';
+    } else {
+        $filepath = '/' . implode('/', $args) . '/';
+    }
+
+    $file = $fs->get_file($context->id, 'block_attendance_by_face', $filearea, $itemid, $filepath, $filename);
+    if (!$file) {
+        return false;
+    }
+
+    // finally send the file
+    send_stored_file($file, 0, 0, false, $options); // download MUST be forced - security!
+}
+
+
 function block_attendance_get_image_url($studentid)
 {
-    global $CFG, $DB;
-    $context = 5;
- 
+    $context = context_system::instance();
+
     $fs = get_file_storage();
-    if ($files = $fs->get_area_files($context, 'user', 'draft')) {
-        $record = $DB->get_record('block_attendance_piu', array('student_id' => $studentid));
+    if ($files = $fs->get_area_files($context->id, 'block_attendance_by_face', 'block_student_photo')) {
+
         foreach ($files as $file) {
-            if ($file->get_itemid() == $record->photo_draft_id && $file->get_filename() != ".") {
-                $download_url = $CFG->wwwroot . "/draftfile.php/" . $context . "/user/draft/" . $record->photo_draft_id . "/" . $file->get_filename() . "?preview=thumb&oid=" . $file->get_timemodified();
+            if ($studentid == $file->get_itemid() && $file->get_filename() != '.') {
+                // Build the File URL. Long process! But extremely accurate.
+                $fileurl = moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(), $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename(), true);
+                // Display the image
+                $download_url = $fileurl->get_port() ? $fileurl->get_scheme() . '://' . $fileurl->get_host() . $fileurl->get_path() . ':' . $fileurl->get_port() : $fileurl->get_scheme() . '://' . $fileurl->get_host() . $fileurl->get_path();
                 return $download_url;
             }
         }
