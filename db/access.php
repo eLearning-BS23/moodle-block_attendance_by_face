@@ -26,7 +26,7 @@
 
 $capabilities = array(
 
-    'block/attendancecourselist:myaddinstance' => array(
+    'block/block_attendance_by_face:myaddinstance' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => array(

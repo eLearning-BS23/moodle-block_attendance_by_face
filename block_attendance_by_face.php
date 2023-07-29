@@ -179,6 +179,10 @@ class block_attendance_by_face extends block_base {
         return $courselist;
     }
 
+    function has_config() {
+        return true;
+    }
+
     /**
      * 
      * Allow the block to have multiple instance
