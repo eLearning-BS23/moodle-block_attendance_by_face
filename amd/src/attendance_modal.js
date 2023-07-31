@@ -165,8 +165,7 @@ define(['jquery', 'core/ajax', 'core/str','core/modal_factory', 'core/notificati
                   .fail(Notification.exception);
               };
               let submitAttendance = (st_img, image, sessionId) => {
-                let wsfunction =
-                  "block_face_recognition_student_attendance_face_recog_api";
+                let wsfunction = "block_attendance_by_face_recognition_api";
                 let params = {
                   studentimg: st_img,
                   webcampicture: image,
@@ -178,9 +177,14 @@ define(['jquery', 'core/ajax', 'core/str','core/modal_factory', 'core/notificati
       
                 Ajax.call([request])[0]
                   .done(function (value) {
-                    let result = value["confidence"];
-                    window.console.log(value);
+                    let original_img_response = value["original_img_response"];
+                    window.console.log(original_img_response);
+                    let face_img_response = value["face_img_response"];
+                    window.console.log(face_img_response);
+                    let distance = value["distance"];
+                    window.console.log(distance);
       
+                    result = 0;
                     if (result >= threshold) {
                       let today = new Date();
                       webcam.stop();
@@ -244,24 +248,21 @@ define(['jquery', 'core/ajax', 'core/str','core/modal_factory', 'core/notificati
                         methodname: wsfunction,
                         args: params,
                       };
-                      console.log(params);
                       
                       Ajax.call([request])[0]
                       .done(function (value) {
-                        console.log(value);
                         if(value.active == 1) {
-                          console.log('Active Course');
+                          
+
+
                           submitAttendance(st_img, image, value.sessionid);
-                        }
-                        else {
+                        } else {
                           displayMessage("Course is not open for taking attendance", 0);
                         }
                       })
                       .fail(function (err) {
                         window.console.log(err);
                       });
-                      
-      
                     });
                     $("#try-again").on("click", function () {
                       removeMessages();

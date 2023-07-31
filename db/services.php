@@ -26,28 +26,36 @@ defined('MOODLE_INTERNAL') || die();
 
 $functions = array(
     'block_attendance_by_face_image_api' => array(
-        'classname' => 'block_attendance_by_face_student_image',
+        'classname'   => 'block_attendance_by_face_student_image',
         'methodname'  => 'get_student_course_image',
         'classpath'   => 'blocks/attendance_by_face/classes/external.php',
         'description' => 'Returns the student image saved in the course for attendance',
         'type'        => 'write',
-        'ajax' => true,
+        'ajax'        => true,
     ),
     'block_attendance_by_face_update_db' => array(
-        'classname' => 'block_attendance_by_face_student_image',
+        'classname'   => 'block_attendance_by_face_student_image',
         'methodname'  => 'student_attendance_update',
         'classpath'   => 'blocks/attendance_by_face/classes/external.php',
         'description' => 'Saves student data to attendance table after completing attendance',
         'type'        => 'write',
-        'ajax' => true,
+        'ajax'        => true,
     ),
     'block_attendance_by_face_check_active_window' => array(
-        'classname' => 'block_attendance_by_face_student_image',
+        'classname'   => 'block_attendance_by_face_student_image',
         'methodname'  => 'check_active_window',
         'classpath'   => 'blocks/attendance_by_face/classes/external.php',
         'description' => 'Calling the api for checking active window for attendance of a particular course',
         'type'        => 'write',
-        'ajax' => true,
+        'ajax'        => true,
+    ),
+    'block_attendance_by_face_recognition_api' => array (
+        'classname'   => 'block_attendance_by_face_student_image',
+        'methodname'  => 'face_recognition_api',
+        'classpath'   => 'blocks/attendance_by_face/classes/external.php',
+        'description' => 'Calling the api for face recognition',
+        'type'        => 'write',
+        'ajax'        => true,
     )
 );
 
@@ -56,7 +64,8 @@ $services = array(
         'functions' => array(
             'block_attendance_by_face_image_api',
             'block_attendance_by_face_update_db',
-            'block_attendance_by_face_check_active_window'
+            'block_attendance_by_face_check_active_window',
+            'block_attendance_by_face_recognition_api'
         ),
         'restrictedusers' => 0,
         // into the administration

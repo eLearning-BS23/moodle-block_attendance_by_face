@@ -80,7 +80,9 @@ class block_attendance_by_face extends block_base {
             $successmessage = get_config('block_attendance_by_face', 'successmessage');
             $failedmessage = get_config('block_attendance_by_face', 'failedmessage');
             $threshold = get_config('block_attendance_by_face', 'threshold');
-            $this->page->requires->js_call_amd('block_attendance_by_face/attendance_modal', 'init', array($USER->id, $successmessage, $failedmessage, $threshold));
+            $modelurl = $CFG->wwwroot . '/mod/quiz/accessrule/proctoring/thirdpartylibs/models';
+            $this->page->requires->js("blocks/attendance_by_face/amd/build/face-api.min.js", true);
+            $this->page->requires->js_call_amd('block_attendance_by_face/attendance_modal', 'init', array($USER->id, $successmessage, $failedmessage, $threshold, $modelurl));
         } else {
             if(!$this->can_view()) {
                 $this->content = get_string('no_permission', 'block_attendance_by_face');

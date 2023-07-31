@@ -154,4 +154,91 @@ class block_attendance_by_face_student_image extends external_api
             )
         );
     }
+
+
+    /**
+     * calling api using curl
+     */
+    public static function face_recognition_api_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                 'studentimg' => new external_value(PARAM_RAW, "Student id"),
+                 'webcampicture' => new external_value(PARAM_RAW, "Student id"),
+            )
+        );
+    }
+
+    public static function face_recognition_api($studentimg, $webcampicture)
+    {
+        global $CFG;
+        $studentimg = str_replace('data:image/png;base64,', '', $studentimg);
+        $webcampicture = str_replace('data:image/png;base64,', '', $webcampicture);
+
+        // $image1 = basename($studentimg);
+        // file_put_contents($CFG->dataroot . '/temp/' . $image1, file_get_contents($studentimg));
+        // $image2 = basename($webcampicture);
+        // file_put_contents($CFG->dataroot . '/temp/' . $image2, file_get_contents($webcampicture));
+
+        // $imageData1 = file_get_contents($image1);
+        // $imageData2 = file_get_contents($image2);
+
+        // $data = array(
+        //     'original_img_response' => base64_encode($imageData1),
+        //     'face_img_response' => base64_encode($imageData2),
+        // );
+
+        $data = array (
+            'original_img_response' => $studentimg,
+            'face_img_response' => $webcampicture,
+        );
+
+        $payload = json_encode($data);
+
+        $bsapi = get_config('block_attendance_by_face', 'bsapi');
+        $bsapikey = get_config('block_attendance_by_face', 'bs_api_key');
+
+        // Check similarity.
+        $curl = curl_init();
+        curl_setopt_array($curl, [
+            CURLOPT_URL => $bsapi,
+            CURLOPT_HTTPHEADER => array(
+                'x-api-key: ' . $bsapikey,
+                "Content-Type: application/json",
+            ),
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => false,
+            CURLOPT_SSL_VERIFYHOST => false,
+            CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => $payload,
+        ]);
+
+        $similarityresult = curl_exec($curl);
+
+        curl_close($curl);
+
+        $response = json_decode($similarityresult);
+
+        $output = array(
+            'original_img_response' => $studentimg,
+            'face_img_response' => $webcampicture,
+            'distance' =>  $response->body->distance
+        );
+
+        return $output;
+    }
+
+    public static function face_recognition_api_returns()
+    {
+        return new external_single_structure(
+            array(
+                'original_img_response' => new external_value(PARAM_RAW, 'updated or failed', VALUE_OPTIONAL),
+                'face_img_response' => new external_value(PARAM_RAW, 'updated or failed', VALUE_OPTIONAL),
+                'distance' => new external_value(PARAM_TEXT, 'distance value', VALUE_OPTIONAL)
+            )
+        );
+    }
 }
