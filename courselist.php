@@ -18,7 +18,7 @@
  * List of visible courses
  *
  * @package    block_attendance_by_face
- * @copyright  2023, Brain Station 23 
+ * @copyright  2023, Brain Station 23
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -29,19 +29,20 @@ $PAGE->set_url(new moodle_url('/blocks/attendance_by_face/courselist.php'));
 $PAGE->set_context(\context_system::instance());
 $PAGE->set_title(get_string('title_courselist', 'block_attendance_by_face'));
 
-// !is_siteadmin()
+require_login();
+
 if (!is_siteadmin() && !block_is_manager() && !block_is_coursecreator() && !block_is_teacher()) {
     redirect($CFG->wwwroot, get_string('no_permission', 'block_attendance_by_face'), null, \core\output\notification::NOTIFY_ERROR);
 }
 
 global $DB, $PAGE, $USER;
 
-if(block_is_teacher()) {
+if (block_is_teacher()) {
     $courses = block_get_enrolled_courselist_as_teacher($USER->id);
 }
 
-if(is_siteadmin() || block_is_manager()) {
-    $sql = "SELECT  c.id id,c.fullname fullname, lpw.active active, lpw.session_id FROM {course} c 
+if (is_siteadmin() || block_is_manager()) {
+    $sql = "SELECT  c.id id,c.fullname fullname, lpw.active active, lpw.session_id FROM {course} c
     left join {block_attendance_piu_window} lpw on c.id =lpw.course_id  and lpw.active=1
     where visible=1 and c.id<>1";
 

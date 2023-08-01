@@ -18,12 +18,14 @@
  * List of student with attendance
  *
  * @package    block_attendance_by_face
- * @copyright  2023, Brain Station 23 
+ * @copyright  2023, Brain Station 23
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once(__DIR__ . '/../../config.php');
 require_once('lib.php');
+
+require_login();
 
 $PAGE->set_url(new moodle_url('/blocks/attendance_by_face/attendancelist.php'));
 $PAGE->set_context(\context_system::instance());
@@ -39,13 +41,14 @@ $d1 = mktime(0, 0, 0);
 $d2 = mktime(23, 59, 59);
 
 $courseid = optional_param('cid', 0, PARAM_INT);
-$from = optional_param('from', $d1, PARAM_RAW);  
+$from = optional_param('from', $d1, PARAM_RAW);
 $to = optional_param('to', $d2, PARAM_RAW);
 
 $sort = optional_param('sort', 'ASC', PARAM_RAW);
 
 if ($courseid == 0) {
-    redirect($CFG->wwwroot, get_string('no_course_selected', 'block_attendance_by_face'), null, \core\output\notification::NOTIFY_WARNING);
+    redirect($CFG->wwwroot, get_string('no_course_selected', 'block_attendance_by_face'),
+    null, \core\output\notification::NOTIFY_WARNING);
 }
 
 global $DB, $PAGE;
@@ -56,21 +59,21 @@ $students = [];
 foreach ($studentdata as $key => $result) {
     $temp = [];
     $temp['student'] = $result->username;
-    $temp['firstname'] =$result->firstname;
-    $temp['lastname'] =$result->lastname;
-    $temp['email'] =$result->email;
+    $temp['firstname'] = $result->firstname;
+    $temp['lastname'] = $result->lastname;
+    $temp['email'] = $result->email;
     $temp['student_id'] = $result->id;
     $temp['session_id'] = $result->session_id;
     $temp['session_name'] = $result->session_name;
     $temp['course_id'] = $result->course_id;
     $temp['time'] = $result->time;
-    
-    if($temp['time']) {
+
+    if ($temp['time']) {
         // New Timezone Object.
         $timezone = new DateTimeZone('Asia/Dhaka');
 
         // Converting timestamp to date time format.
-        $date =  new DateTime('@'.$temp['time'], $timezone);   
+        $date = new DateTime('@'.$temp['time'], $timezone);
         $date->setTimezone($timezone);
         $temp['timedate'] = $date->format('m-d-Y H:i:s');
     } else {
@@ -101,11 +104,11 @@ $PAGE->requires->js_call_amd('block_attendance_by_face/date_time_handler', 'init
 ));
 
 echo $OUTPUT->download_dataformat_selector(
-    get_string('export', 'block_attendance_by_face'), 
-    'download.php', 
-    'dataformat', 
+    get_string('export', 'block_attendance_by_face'),
+    'download.php',
+    'dataformat',
     array(
-        'cid' => $courseid, 
+        'cid' => $courseid,
         'from' => $from,
         'to' => $to,
         'sort' => $sort,

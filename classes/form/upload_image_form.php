@@ -18,21 +18,20 @@
  * form for image file upload
  *
  * @package    block_attendance_by_face
- * @copyright  2023, Brain Station 23 
+ * @copyright  2023, Brain Station 23
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-//moodleform is defined in formslib.php
+defined('MOODLE_INTERNAL') || die();
+
 require_once("$CFG->libdir/formslib.php");
 
-class imageupload_form extends moodleform
-{
-    //Add elements to form
-    public function definition()
-    {
+class imageupload_form extends moodleform {
+    // Add elements to form.
+    public function definition() {
         global $CFG;
 
-        $mform = $this->_form; // Don't forget the underscore! 
+        $mform = $this->_form; // Don't forget the underscore!
 
         $mform->addElement('header', 'student_name', 'name');
         $mform->addElement('hidden', 'id', 'Student id');
@@ -55,9 +54,9 @@ class imageupload_form extends moodleform
 
         $this->add_action_buttons();
     }
-    //Custom validation should be added here
-    function validation($data, $files)
-    {
+
+    // Custom validation should be added here.
+    public function validation($data, $files) {
         return array();
     }
 }

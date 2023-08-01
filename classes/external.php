@@ -18,16 +18,16 @@
  * Externallib file for sevices functions
  *
  * @package    block_attendance_by_face
- * @copyright  2023, Brain Station 23 
+ * @copyright  2023, Brain Station 23
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+defined('MOODLE_INTERNAL') || die();
 
 require_once("$CFG->libdir/externallib.php");
 
-class block_attendance_by_face_student_image extends external_api
-{
-    public static function get_student_course_image_parameters()
-    {
+class block_attendance_by_face_student_image extends external_api {
+
+    public static function get_student_course_image_parameters() {
         return new external_function_parameters(
             array(
                 'courseid' => new external_value(PARAM_INT, "Course id"),
@@ -36,12 +36,10 @@ class block_attendance_by_face_student_image extends external_api
         );
     }
 
-    public static function get_student_course_image($courseid, $studentid)
-    {
+    public static function get_student_course_image($courseid, $studentid) {
         global $DB;
         $coursename = $DB->get_record_select('course', "id = :id", array('id' => $courseid));
 
-        // $context = context_course::instance($courseid);
         $context = context_system::instance();
 
         $fs = get_file_storage();
@@ -49,16 +47,19 @@ class block_attendance_by_face_student_image extends external_api
             foreach ($files as $file) {
                 if ($studentid == $file->get_itemid() && $file->get_filename() != '.') {
                     // Build the File URL. Long process! But extremely accurate.
-                    $fileurl = moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(), $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename(), false);
-                    // Display the image
-                    $download_url = $fileurl->get_port() ? $fileurl->get_scheme() . '://' . $fileurl->get_host() . $fileurl->get_path() . ':' . $fileurl->get_port() : $fileurl->get_scheme() . '://' . $fileurl->get_host() . $fileurl->get_path();
+                    $fileurl = moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(),
+                    $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename(), false);
+                    // Display the image.
+                    $downloadurl = $fileurl->get_port() ? $fileurl->get_scheme() . '://' . $fileurl->get_host() .
+                    $fileurl->get_path() . ':' . $fileurl->get_port() : $fileurl->get_scheme() . '://'
+                    . $fileurl->get_host() . $fileurl->get_path();
 
-                    $return_value = [
-                        'image_url' => $download_url,
+                    $returnvalue = [
+                        'image_url' => $downloadurl,
                         'course_name' => $coursename->fullname
                     ];
 
-                    return $return_value;
+                    return $returnvalue;
                 }
             }
         }
@@ -68,8 +69,7 @@ class block_attendance_by_face_student_image extends external_api
         ];
     }
 
-    public static function get_student_course_image_returns()
-    {
+    public static function get_student_course_image_returns() {
         return new external_single_structure(
             array(
                 'image_url' => new external_value(PARAM_URL, 'Url of student image'),
@@ -82,8 +82,7 @@ class block_attendance_by_face_student_image extends external_api
     /**
      * Update db for student attendance
      */
-    public static function student_attendance_update_parameters()
-    {
+    public static function student_attendance_update_parameters() {
         return new external_function_parameters(
             array(
                 'courseid' => new external_value(PARAM_INT, "Course id"),
@@ -92,8 +91,7 @@ class block_attendance_by_face_student_image extends external_api
             )
         );
     }
-    public static function student_attendance_update($courseid, $studentid, $sessionid)
-    {
+    public static function student_attendance_update($courseid, $studentid, $sessionid) {
         global $DB;
 
         $record = $DB->get_record('block_attendance_fc_recog', array(
@@ -101,25 +99,23 @@ class block_attendance_by_face_student_image extends external_api
                         'student_id' => $studentid,
                         'session_id' => $sessionid
                     ));
-        if(empty($record)) {
+        if (empty($record)) {
             $record = new stdClass();
             $record->student_id = $studentid;
             $record->course_id = $courseid;
             $record->session_id = $sessionid;
             $record->time = time();
-            
+
             $DB->insert_record('block_attendance_fc_recog', $record);
         } else {
             $record->time = time();
-            
+
             $DB->update_record('block_attendance_fc_recog', $record);
         }
-        
 
         return ['status' => 'updated'];
     }
-    public static function student_attendance_update_returns()
-    {
+    public static function student_attendance_update_returns() {
         return new external_single_structure(
             array(
                 'status' => new external_value(PARAM_TEXT, 'upadated or failed')
@@ -127,16 +123,14 @@ class block_attendance_by_face_student_image extends external_api
         );
     }
 
-    public static function check_active_window_parameters() 
-    {
+    public static function check_active_window_parameters() {
         return new external_function_parameters(
             array(
                 'courseid' => new external_value(PARAM_INT, "Course id"),
             )
         );
     }
-    public static function check_active_window($courseid) 
-    {
+    public static function check_active_window($courseid) {
         global $DB;
         $course = $DB->get_record('block_attendance_piu_window', array('course_id' => $courseid, 'active' => 1));
 
@@ -145,8 +139,7 @@ class block_attendance_by_face_student_image extends external_api
             'sessionid' => $course->session_id,
         ];
     }
-    public static function check_active_window_returns() 
-    {
+    public static function check_active_window_returns() {
         return new external_single_structure(
             array(
                 'active' => new external_value(PARAM_INT, 'Return active 0 or 1'),
@@ -159,8 +152,7 @@ class block_attendance_by_face_student_image extends external_api
     /**
      * calling api using curl
      */
-    public static function face_recognition_api_parameters()
-    {
+    public static function face_recognition_api_parameters() {
         return new external_function_parameters(
             array(
                  'studentimg' => new external_value(PARAM_RAW, "Student id"),
@@ -169,24 +161,10 @@ class block_attendance_by_face_student_image extends external_api
         );
     }
 
-    public static function face_recognition_api($studentimg, $webcampicture)
-    {
+    public static function face_recognition_api($studentimg, $webcampicture) {
         global $CFG;
         $studentimg = str_replace('data:image/png;base64,', '', $studentimg);
         $webcampicture = str_replace('data:image/png;base64,', '', $webcampicture);
-
-        // $image1 = basename($studentimg);
-        // file_put_contents($CFG->dataroot . '/temp/' . $image1, file_get_contents($studentimg));
-        // $image2 = basename($webcampicture);
-        // file_put_contents($CFG->dataroot . '/temp/' . $image2, file_get_contents($webcampicture));
-
-        // $imageData1 = file_get_contents($image1);
-        // $imageData2 = file_get_contents($image2);
-
-        // $data = array(
-        //     'original_img_response' => base64_encode($imageData1),
-        //     'face_img_response' => base64_encode($imageData2),
-        // );
 
         $data = array (
             'original_img_response' => $studentimg,
@@ -225,14 +203,13 @@ class block_attendance_by_face_student_image extends external_api
         $output = array(
             'original_img_response' => $studentimg,
             'face_img_response' => $webcampicture,
-            'distance' =>  $response->body->distance
+            'distance' => $response->body->distance
         );
 
         return $output;
     }
 
-    public static function face_recognition_api_returns()
-    {
+    public static function face_recognition_api_returns() {
         return new external_single_structure(
             array(
                 'original_img_response' => new external_value(PARAM_RAW, 'updated or failed', VALUE_OPTIONAL),

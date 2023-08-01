@@ -1,4 +1,3 @@
-  
 <?php
 // This file is part of Moodle - https://moodle.org/
 //
@@ -19,13 +18,13 @@
  * Settings student attendance plugin.
  *
  * @package    block_attendance_by_face
- * @copyright  2023, Brain Station 23 
+ * @copyright  2023, Brain Station 23
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
+defined('MOODLE_INTERNAL') || die();
 
-if($ADMIN->fulltree) {
+if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configtext('block_attendance_by_face/successmessage',
         get_string('successmessagetext', 'block_attendance_by_face'),
         get_string('successmessagelongtext', 'block_attendance_by_face'),
@@ -43,9 +42,9 @@ if($ADMIN->fulltree) {
 
     $settings->add(new admin_setting_configpasswordunmask('block_attendance_by_face/bs_api_key',
         get_string('setting:bs_api_key', 'block_attendance_by_face'),
-        get_string('setting:bs_api_keydesc', 'block_attendance_by_face'), 
+        get_string('setting:bs_api_keydesc', 'block_attendance_by_face'),
         ''));
-    
+
     $settings->add(new admin_setting_configtext('block_attendance_by_face/threshold',
         get_string('threshold', 'block_attendance_by_face'),
         get_string('thresholdlongtext', 'block_attendance_by_face'),

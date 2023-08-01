@@ -18,7 +18,7 @@
  * Version metadata for the block_attendance_by_face plugin.
  *
  * @package   block_attendance_by_face
- * @copyright 2023, Brain Station 23 
+ * @copyright 2023, Brain Station 23
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

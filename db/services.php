@@ -18,7 +18,7 @@
  * Web service description
  *
  * @package    block_attendance_by_face
- * @copyright  2023, Brain Station 23 
+ * @copyright  2023, Brain Station 23
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -68,8 +68,8 @@ $services = array(
             'block_attendance_by_face_recognition_api'
         ),
         'restrictedusers' => 0,
-        // into the administration
+        // Into the administration.
         'enabled' => 1,
-        'shortname' =>  'baf_image_api',
+        'shortname' => 'baf_image_api',
     )
 );

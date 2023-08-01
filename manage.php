@@ -18,7 +18,7 @@
  * Version metadata for the block_pluginname plugin.
  *
  * @package   block_attendance_by_face
- * @copyright 2023, Brain Station 23 
+ * @copyright 2023, Brain Station 23
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -53,13 +53,14 @@ $sql = "SELECT u.id id, (u.username) 'student', u.firstname , u.lastname, u.emai
 $studentdata = $DB->get_records_sql($sql);
 
 // Check if there is any active session and the student is present or not.
-foreach($studentdata as $student) {
+foreach ($studentdata as $student) {
     $activesession = $DB->get_record('block_attendance_piu_window', array('course_id' => $courseid, 'active' => 1));
-    if($activesession) {
+    if ($activesession) {
         $student->session = true;
         $student->session_id = $activesession->session_id;
-        $record = $DB->get_record('block_attendance_fc_recog', array('student_id' => $student->id, 'session_id' => $activesession->session_id));
-        if($record) {
+        $record = $DB->get_record('block_attendance_fc_recog',
+        array('student_id' => $student->id, 'session_id' => $activesession->session_id));
+        if ($record) {
             $student->present = true;
         } else {
             $student->present = false;

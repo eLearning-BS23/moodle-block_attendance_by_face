@@ -18,7 +18,7 @@
  * Version metadata for the block_pluginname plugin.
  *
  * @package   block_attendance_by_face
- * @copyright 2023, Brain Station 23 
+ * @copyright 2023, Brain Station 23
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -34,8 +34,7 @@
  * @param array $options additional options affecting the file serving.
  * @return bool false if the file not found, just send the file otherwise and do not return anything.
  */
-function block_attendance_by_face_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array())
-{
+function block_attendance_by_face_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
     global $DB;
 
     if ($context->contextlevel != CONTEXT_SYSTEM) {
@@ -64,13 +63,12 @@ function block_attendance_by_face_pluginfile($course, $cm, $context, $filearea, 
         return false;
     }
 
-    // finally send the file
-    send_stored_file($file, 0, 0, false, $options); // download MUST be forced - security!
+    // Finally send the file.
+    send_stored_file($file, 0, 0, false, $options);
 }
 
 
-function block_attendance_get_image_url($studentid)
-{
+function block_attendance_get_image_url($studentid) {
     $context = context_system::instance();
 
     $fs = get_file_storage();
@@ -79,10 +77,13 @@ function block_attendance_get_image_url($studentid)
         foreach ($files as $file) {
             if ($studentid == $file->get_itemid() && $file->get_filename() != '.') {
                 // Build the File URL. Long process! But extremely accurate.
-                $fileurl = moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(), $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename(), true);
-                // Display the image
-                $download_url = $fileurl->get_port() ? $fileurl->get_scheme() . '://' . $fileurl->get_host() . $fileurl->get_path() . ':' . $fileurl->get_port() : $fileurl->get_scheme() . '://' . $fileurl->get_host() . $fileurl->get_path();
-                return $download_url;
+                $fileurl = moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(),
+                $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename(), true);
+                // Display the image.
+                $downloadurl = $fileurl->get_port() ? $fileurl->get_scheme() . '://' .
+                $fileurl->get_host() . $fileurl->get_path() . ':' . $fileurl->get_port() : $fileurl->get_scheme() .
+                '://' . $fileurl->get_host() . $fileurl->get_path();
+                return $downloadurl;
             }
         }
     }
@@ -95,7 +96,7 @@ function block_attendance_get_image_url($studentid)
 function block_is_manager() {
     global $DB, $USER;
     $roleid = $DB->get_field('role', 'id', ['shortname' => 'manager']);
-    return $DB->record_exists('role_assignments', ['userid' => $USER->id, 'roleid' => $roleid]); 
+    return $DB->record_exists('role_assignments', ['userid' => $USER->id, 'roleid' => $roleid]);
 }
 
 /**
@@ -104,7 +105,7 @@ function block_is_manager() {
 function block_is_coursecreator() {
     global $DB, $USER;
     $roleid = $DB->get_field('role', 'id', ['shortname' => 'coursecreator']);
-    return $DB->record_exists('role_assignments', ['userid' => $USER->id, 'roleid' => $roleid]); 
+    return $DB->record_exists('role_assignments', ['userid' => $USER->id, 'roleid' => $roleid]);
 }
 
 /**
@@ -113,7 +114,7 @@ function block_is_coursecreator() {
 function block_is_teacher() {
     global $DB, $USER;
     $roleid = $DB->get_field('role', 'id', ['shortname' => 'editingteacher']);
-    return $DB->record_exists('role_assignments', ['userid' => $USER->id, 'roleid' => $roleid]); 
+    return $DB->record_exists('role_assignments', ['userid' => $USER->id, 'roleid' => $roleid]);
 }
 
 /**
@@ -122,42 +123,45 @@ function block_is_teacher() {
 function block_student_attandancelist($courseid, $from, $to, $sort) {
     global $DB;
 
-    $sql = "SELECT DISTINCT session_id 
+    $sql = "SELECT DISTINCT session_id
     FROM {block_attendance_fc_recog}
     WHERE ({block_attendance_fc_recog}.time > " . $from . " AND {block_attendance_fc_recog}.time < " . $to .")";
     $sessionlist1 = $DB->get_records_sql($sql);
 
-    $sql = "SELECT session_id 
-    FROM {block_attendance_piu_window} 
+    $sql = "SELECT session_id
+    FROM {block_attendance_piu_window}
     WHERE {block_attendance_piu_window}.session_id > " . $from . " AND {block_attendance_piu_window}.session_id < " . $to . "
         AND {block_attendance_piu_window}.session_id NOT IN (SELECT session_id FROM {block_attendance_fc_recog})";
     $sessionlist2 = $DB->get_records_sql($sql);
 
     $distintsessions = array();
-    foreach($sessionlist1 as $session) {
+    foreach ($sessionlist1 as $session) {
         array_push($distintsessions, $session->session_id);
     }
-    foreach($sessionlist2 as $session) {
+    foreach ($sessionlist2 as $session) {
         array_push($distintsessions, $session->session_id);
     }
 
     $string = implode(", ", $distintsessions);
-    
-    if(empty($string)) {
+
+    if (empty($string)) {
         $studentdata = array();
         return $studentdata;
     }
- 
-    $sql = "SELECT {user}.id, {user}.username, {block_attendance_piu_window}.session_id, {block_attendance_piu_window}.session_name, {course}.id course_id, {block_attendance_fc_recog}.time, {user}.firstname, {user}.lastname, {user}.email
+
+    $sql = "SELECT {user}.id, {user}.username, {block_attendance_piu_window}.session_id, {block_attendance_piu_window}.session_name,
+    {course}.id course_id, {block_attendance_fc_recog}.time, {user}.firstname, {user}.lastname, {user}.email
         FROM {role_assignments}
         JOIN {user} on {role_assignments}.userid = {user}.id
         JOIN {role} on {role_assignments}.roleid = {role}.id
         JOIN {context} on {role_assignments}.contextid = {context}.id
         JOIN {course} on {context}.instanceid = {course}.id
         LEFT JOIN {block_attendance_piu_window} on {course}.id = {block_attendance_piu_window}.course_id
-        LEFT JOIN {block_attendance_fc_recog} on {course}.id = {block_attendance_fc_recog}.course_id AND {user}.id = {block_attendance_fc_recog}.student_id AND {block_attendance_piu_window}.session_id = {block_attendance_fc_recog}.session_id
-        WHERE {role}.shortname = 'student' AND {course}.id=$courseid AND {block_attendance_piu_window}.session_id in 
-        (" . $string . ") 
+        LEFT JOIN {block_attendance_fc_recog} on {course}.id = {block_attendance_fc_recog}.course_id
+        AND {user}.id = {block_attendance_fc_recog}.student_id AND
+        {block_attendance_piu_window}.session_id = {block_attendance_fc_recog}.session_id
+        WHERE {role}.shortname = 'student' AND {course}.id=$courseid AND {block_attendance_piu_window}.session_id in
+        (" . $string . ")
         GROUP BY {user}.id, {block_attendance_piu_window}.session_id
         ORDER BY {block_attendance_piu_window}.session_id " . $sort;
 
@@ -210,7 +214,7 @@ function block_toggle_window($courseid, $changedby, $sessionid, $active) {
 
 /**
  * Prepares and returns a session name for a course according to the convention.
- * 
+ *
  * Session name: C{courseid}-y/m/d-{nth_session_of_today} (eg. C100-2022/08/01-01, C100-2022/08/01-02)
  */
 function block_get_session_name($courseid) {
@@ -222,15 +226,15 @@ function block_get_session_name($courseid) {
     $t1 = mktime(0, 0, 0);
     $t2 = mktime(23, 59, 59);
 
-    $sql = "SELECT * FROM {block_attendance_piu_window} 
+    $sql = "SELECT * FROM {block_attendance_piu_window}
             WHERE {block_attendance_piu_window}.session_id > $t1 AND {block_attendance_piu_window}.session_id < $t2";
 
     $records = $DB->get_records_sql($sql);
     $count = count($records) + 1;
-    
+
     // Prepare session name.
-    $session_name = "C" . $courseid . "-" . date('Y/m/d', strtotime('now')) . "-" . $count;
-    return $session_name;
+    $sessionname = "C" . $courseid . "-" . date('Y/m/d', strtotime('now')) . "-" . $count;
+    return $sessionname;
 }
 
 /**
@@ -247,7 +251,7 @@ function block_attendance_status($courseid, $studentid, $sessionid) {
 }
 
 /**
- * Submits attendance. 
+ * Submits attendance.
  */
 function block_student_attendance_update($courseid, $studentid, $sessionid) {
     global $DB;
@@ -257,6 +261,6 @@ function block_student_attendance_update($courseid, $studentid, $sessionid) {
     $record->course_id = $courseid;
     $record->session_id = $sessionid;
     $record->time = time();
-        
+
     $DB->insert_record('block_attendance_fc_recog', $record);
 }
