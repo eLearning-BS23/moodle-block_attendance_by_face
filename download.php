@@ -31,6 +31,8 @@ if (!is_siteadmin() && !block_is_manager() && !block_is_coursecreator()  && !blo
     redirect($CFG->wwwroot, get_string('no_permission', 'block_attendance_by_face'), null, \core\output\notification::NOTIFY_ERROR);
 }
 
+global $USER;
+
 $courseid = optional_param('cid', 0, PARAM_INT);
 $from = optional_param('from', mktime(-5, 1, 0), PARAM_RAW);  // Get the starting of date (12:01 AM).
 $to = optional_param('to', mktime(18, 59, 59), PARAM_RAW);  // Get the end of date (11:59 PM).
@@ -61,7 +63,7 @@ foreach ($studentdata as $key => $result) {
 
     if ($temp['time']) {
         // New Timezone Object.
-        $timezone = new DateTimeZone('Asia/Dhaka');
+        $timezone = new DateTimeZone($USER->timezone);
 
         // Converting timestamp to date time format.
         $date = new DateTime('@'.$temp['time'], $timezone);

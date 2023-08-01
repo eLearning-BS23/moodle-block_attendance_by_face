@@ -218,11 +218,11 @@ function block_toggle_window($courseid, $changedby, $sessionid, $active) {
  * Session name: C{courseid}-y/m/d-{nth_session_of_today} (eg. C100-2022/08/01-01, C100-2022/08/01-02)
  */
 function block_get_session_name($courseid) {
-    global $DB;
+    global $DB, $USER;
     // Get the total number of sessions of the specific course for today.
 
     // Setting default timezone.
-    date_default_timezone_set('Asia/Dhaka');
+    date_default_timezone_set($USER->timezone);
     $t1 = mktime(0, 0, 0);
     $t2 = mktime(23, 59, 59);
 

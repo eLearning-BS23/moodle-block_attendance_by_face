@@ -36,7 +36,8 @@ if (!is_siteadmin() && !block_is_manager() && !block_is_coursecreator()  && !blo
 }
 
 // Setting default value.
-date_default_timezone_set('Asia/Dhaka');
+global $USER;
+date_default_timezone_set($USER->timezone);
 $d1 = mktime(0, 0, 0);
 $d2 = mktime(23, 59, 59);
 
@@ -51,7 +52,7 @@ if ($courseid == 0) {
     null, \core\output\notification::NOTIFY_WARNING);
 }
 
-global $DB, $PAGE;
+global $DB, $PAGE, $USER;
 $studentdata = block_student_attandancelist($courseid, $from, $to, $sort);
 
 $students = [];
@@ -70,7 +71,7 @@ foreach ($studentdata as $key => $result) {
 
     if ($temp['time']) {
         // New Timezone Object.
-        $timezone = new DateTimeZone('Asia/Dhaka');
+        $timezone = new DateTimeZone($USER->timezone);
 
         // Converting timestamp to date time format.
         $date = new DateTime('@'.$temp['time'], $timezone);
