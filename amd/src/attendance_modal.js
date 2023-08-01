@@ -1,7 +1,37 @@
 define(['jquery', 'core/ajax', 'core/str','core/modal_factory', 'core/notification', './webcam'],
     function($, Ajax, str, ModalFactory, Notification, Webcam) {
       return {
-        async init (studentid, successmessage, failedmessage, threshold) {
+        async init (studentid, successmessage, failedmessage, threshold, modelurl) {
+          // Load the model.
+          await faceapi.nets.ssdMobilenetv1.loadFromUri(modelurl);
+
+          // Function to detect the face.
+          var detectface = async function (input, croppedImage){
+            const output = await faceapi.detectAllFaces(input);
+            detections = output[0].box;
+            let res = extractFaceFromBox(input, detections, croppedImage);
+            return res;
+          }
+
+          // Function to draw image from the box data.
+          async function extractFaceFromBox(imageRef, box, croppedImage) {
+            const regionsToExtract = [
+              new faceapi.Rect(box.x, box.y, box.width, box.height)
+            ];
+            let faceImages = await faceapi.extractFaces(imageRef, regionsToExtract);
+
+            if (faceImages.length === 0) {
+              console.log("No face found");
+            } else {
+
+              faceImages.forEach((cnv) => {
+                croppedImage.src = cnv.toDataURL();
+              });
+             
+              return croppedImage.src;
+            }
+          }
+
         $(".action-modal").on("click", function () {
           let st_img_url = "";
           let course_name = "";
@@ -79,6 +109,9 @@ define(['jquery', 'core/ajax', 'core/str','core/modal_factory', 'core/notificati
               <video id="webcam" autoplay playsinline width="300" height="225" style="display:none;margin:auto"></video>
               <canvas id="canvas" class="d-none" style="display:none;"></canvas>
               <img id="st-image" style="display: none;"/>
+              <img id="st-image-cropped" style="display: none;"/>
+              <img id="webcam-image" style="display: none;"/>
+              <img id="webcam-image-cropped" style="display: none;"/>
               <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: center; padding: 0.75rem;">
                 <button id='start-webcam' class="btn btn-primary"> ` + start_webcam +  `</button>
                 <button id="submit-attendance" style="display:none;" class="btn btn-primary"> ` + submit_attendance + `</button>
@@ -184,8 +217,7 @@ define(['jquery', 'core/ajax', 'core/str','core/modal_factory', 'core/notificati
                     let distance = value["distance"];
                     window.console.log(distance);
       
-                    result = 0;
-                    if (result >= threshold) {
+                    if (distance < threshold) {
                       let today = new Date();
                       webcam.stop();
                       displaySuccessMessage();
@@ -238,6 +270,15 @@ define(['jquery', 'core/ajax', 'core/str','core/modal_factory', 'core/notificati
                         st_img = getDataUrl(studentimg);
                       }
                       let image = webcam.snap();
+                      let webcamimg = document.getElementById("webcam-image");
+                      let webcamimgcrop = document.getElementById("webcam-image-cropped");
+                      let studentimgcrop = document.getElementById("st-image-cropped");
+                      webcamimg.src = image;
+                      async function a () {
+                        st_img = await detectface(webcamimg, webcamimgcrop);
+                        image = await detectface(studentimg, studentimgcrop);
+                      };
+                      a().then(() => {
                       //let request = getRequestForCheckingActiveWindowAPI(course_id);
                       let wsfunction =
                         "block_attendance_by_face_check_active_window";
@@ -252,9 +293,6 @@ define(['jquery', 'core/ajax', 'core/str','core/modal_factory', 'core/notificati
                       Ajax.call([request])[0]
                       .done(function (value) {
                         if(value.active == 1) {
-                          
-
-
                           submitAttendance(st_img, image, value.sessionid);
                         } else {
                           displayMessage("Course is not open for taking attendance", 0);
@@ -262,6 +300,8 @@ define(['jquery', 'core/ajax', 'core/str','core/modal_factory', 'core/notificati
                       })
                       .fail(function (err) {
                         window.console.log(err);
+                      });
+
                       });
                     });
                     $("#try-again").on("click", function () {
