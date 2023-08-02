@@ -142,3 +142,23 @@ From the list of students user can navigate to list of attendance by clicking <b
 ![Attendance List](screenshots/attendance_list.png)
 
 
+## FAQ’s:
+1. How can I upload a student image? 
+  
+    > At the list of students, an **upload** button is given to upload student image.
+2. How can I give attendance manually? 
+  
+    > At the list of students, **Give attendance** button is given to give attendance manually. Remember to select the correct session first. 
+
+3. Can the students upload their own images? 
+    
+    > No, only admins can access. 
+4. Where can I get the BS Service API credentials? 
+    
+    > Please contact here: elearning@brainstation-23.com for a trial key.
+5. As a student, why can’t I validate my face to give attendance? 
+    > Student’s image must be uploaded by an admin in the moodle to validate their face.
+6. Why my students can't see any message when they click on the attendance button?
+    > Please inform them to refresh the site and try again.
+7. Why my student's are getting failed messages?
+    > Every user image and object in front of the webcam needs to have a face that can be detected. Please make sure the image is bright enough and there is no multiple face in that image.
