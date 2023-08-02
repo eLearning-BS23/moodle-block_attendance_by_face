@@ -224,7 +224,7 @@ define(['jquery', 'core/ajax', 'core/str','core/modal_factory', 'core/notificati
                       logAttendance(sessionId);
       
                       Notification.confirm(
-                        "Attendance submitted successfully",
+                        successmessage,
                         `
                         Course: ${course_name}<br>
                         Date: ${today.toLocaleDateString("en-UK")}<br>
