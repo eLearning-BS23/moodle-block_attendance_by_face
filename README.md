@@ -77,7 +77,7 @@ Site Administration ➜ Plugins ➜ Blocks ➜ Attendance By Face
 
 ## 💡 How to use
 
-### Adding the block plugin
+### <span id='add-plugin'>Adding the block plugin</span>
  - To add the block plugin enable <b>Edit Mode</b> at dashboard.
  ![Edit mode at dashboard](screenshots/dashboard_edit_mode.png)
 
@@ -110,3 +110,35 @@ Site Administration ➜ Plugins ➜ Blocks ➜ Attendance By Face
 ![Session started](screenshots/session_started.png)
 
 ### Giving attendance from student's end
+
+- Student have to add the block plugin as the same way mentioned before. <a href='#add-plugin'>Click to see</a>
+
+- For a running session the course name will apear at this block with an <b>Attendance</b> button.
+![Attendance button at student's end](screenshots/attendance_block_student_end.png)
+
+- Clicking on the <b>Attendance</b> button will open a modal that will ask permission to start the webcam and after giving permission student will be able to give attendance.
+![Start Webcam](screenshots/start_webcam.png)
+![Submit attendance](screenshots/submit_attendance.png)
+
+
+``` 
+Successsfull Message 
+```
+![Successfull Message](screenshots/successfull_message.png)
+
+```
+Failure Message for wrong credentials
+```
+
+![Wrong Student Image](screenshots/wrong_image.png)
+![Wrong Student](screenshots/wrong_student.png)
+
+### Giving attendance from teacher's end
+- Teachers can simply select the particular session from the students list and enter <b>Give attendance</b> button.
+
+## Attendance List
+From the list of students user can navigate to list of attendance by clicking <b>Attendance List</b> button.
+
+![Attendance List](screenshots/attendance_list.png)
+
+

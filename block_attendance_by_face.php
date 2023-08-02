@@ -86,7 +86,7 @@ class block_attendance_by_face extends block_base {
             $failedmessage = get_config('block_attendance_by_face', 'failedmessage');
 
             if (empty($failedmessage)) {
-                $successmessage = get_string('failedmessagetextdefault', 'block_attendance_by_face');
+                $failedmessage = get_string('failedmessagetextdefault', 'block_attendance_by_face');
             }
 
             $threshold = get_config('block_attendance_by_face', 'threshold');

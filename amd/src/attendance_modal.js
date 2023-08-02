@@ -217,7 +217,7 @@ define(['jquery', 'core/ajax', 'core/str','core/modal_factory', 'core/notificati
                     let distance = value["distance"];
                     window.console.log(distance);
       
-                    if (distance < threshold) {
+                    if (distance != null && distance < threshold) {
                       let today = new Date();
                       webcam.stop();
                       displaySuccessMessage();
