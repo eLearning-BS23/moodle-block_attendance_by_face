@@ -28,12 +28,12 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configtext('block_attendance_by_face/successmessage',
         get_string('successmessagetext', 'block_attendance_by_face'),
         get_string('successmessagelongtext', 'block_attendance_by_face'),
-        ''));
+        get_string('successmessagetextdefault', 'block_attendance_by_face')));
 
     $settings->add(new admin_setting_configtext('block_attendance_by_face/failedmessage',
         get_string('failedmessagetext', 'block_attendance_by_face'),
         get_string('failedmessagelongtext', 'block_attendance_by_face'),
-        ''));
+        get_string('failedmessagetextdefault', 'block_attendance_by_face')));
 
     $settings->add(new admin_setting_configtext('block_attendance_by_face/bsapi',
         get_string('setting:bs_api', 'block_attendance_by_face'),
@@ -48,5 +48,5 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configtext('block_attendance_by_face/threshold',
         get_string('threshold', 'block_attendance_by_face'),
         get_string('thresholdlongtext', 'block_attendance_by_face'),
-        '0.7'));
+        '0.68'));
 }

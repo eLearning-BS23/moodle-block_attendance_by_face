@@ -78,8 +78,23 @@ class block_attendance_by_face extends block_base {
                 }
             }
             $successmessage = get_config('block_attendance_by_face', 'successmessage');
+
+            if (empty($successmessage)) {
+                $successmessage = get_string('successmessagetextdefault', 'block_attendance_by_face');
+            }
+
             $failedmessage = get_config('block_attendance_by_face', 'failedmessage');
+
+            if (empty($failedmessage)) {
+                $successmessage = get_string('failedmessagetextdefault', 'block_attendance_by_face');
+            }
+
             $threshold = get_config('block_attendance_by_face', 'threshold');
+
+            if (empty($threshold)) {
+                $threshold = 0.68;
+            }
+
             $modelurl = $CFG->wwwroot . '/blocks/attendance_by_face/thirdpartylibs/models';
             $this->page->requires->js("/blocks/attendance_by_face/amd/build/face-api.min.js", true);
             $this->page->requires->js_call_amd('block_attendance_by_face/attendance_modal',
