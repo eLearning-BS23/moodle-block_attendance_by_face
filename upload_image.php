@@ -18,7 +18,7 @@
  * Image Upload Functionalities
  *
  * @package    block_attendance_by_face
- * @copyright  2023, Brain Station 23 
+ * @copyright  2023, Brain Station 23
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -40,10 +40,10 @@ $courseid = optional_param('cid', 0, PARAM_INT);
 $studentid = optional_param('id', -1, PARAM_INT);
 
 
-// Instantiate imageupload_form 
+// Instantiate imageupload_form.
 $mform = new imageupload_form();
 
-// checking form
+// Checking form.
 if ($mform->is_cancelled()) {
     redirect($CFG->wwwroot . '', 'Cancelled image upload', null, \core\output\notification::NOTIFY_INFO);
 } else if ($data = $mform->get_data()) {
@@ -62,27 +62,23 @@ if ($mform->is_cancelled()) {
         $record->photo_draft_id = $data->block_student_photo;
         $record->course_id = $data->course;
         $DB->update_record('block_attendance_piu', $record);
-        redirect($CFG->wwwroot . '/blocks/attendance_by_face/manage.php?cid=' . $data->course, 'Image updated', null, \core\output\notification::NOTIFY_SUCCESS);
+        redirect($CFG->wwwroot . '/blocks/attendance_by_face/manage.php?cid=' . $data->course, 'Image updated',
+        null, \core\output\notification::NOTIFY_SUCCESS);
     } else {
         $record = new stdClass;
         $record->student_id = $data->id;
         $record->course_id = $data->course;
         $record->photo_draft_id = $data->block_student_photo;
         $DB->insert_record('block_attendance_piu', $record);
-        redirect($CFG->wwwroot . '/blocks/attendance_by_face/manage.php?cid=' . $data->course, 'Image updated', null, \core\output\notification::NOTIFY_SUCCESS);
+        redirect($CFG->wwwroot . '/blocks/attendance_by_face/manage.php?cid=' . $data->course, 'Image updated',
+        null, \core\output\notification::NOTIFY_SUCCESS);
     }
 }
-
-// // get context
-// if ($courseid) {
-//     $context = context_course::instance($courseid);
-// }
 
 $context = context_system::instance();
 $coursename = $DB->get_record_select('course', 'id=:cid', array('cid' => $courseid), 'fullname');
 $studentname = $DB->get_record_select('user', 'id=:id', array('id' => $studentid), 'firstname ,lastname');
 
-// prepare image file
 if (empty($student->id)) {
     $student = new stdClass;
     $student->id = $studentid;

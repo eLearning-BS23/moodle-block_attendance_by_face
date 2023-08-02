@@ -18,7 +18,7 @@
  * Submits the attendance.
  *
  * @package    block_attendance_by_face
- * @copyright  2023, Brain Station 23 
+ * @copyright  2023, Brain Station 23
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -26,18 +26,23 @@ require_once(__DIR__ . '/../../config.php');
 
 require_once('lib.php');
 
+require_login();
+
 $studentid = optional_param("id", 0, PARAM_INT);
 $courseid = optional_param("cid", 0, PARAM_INT);
 $sessionid = optional_param("session_id", 0, PARAM_INT);
 
-if($studentid && $courseid && $sessionid) {
+if ($studentid && $courseid && $sessionid) {
     // Check attendance at first.
-    if(block_attendance_status($courseid, $studentid, $sessionid)) {
-        redirect(new moodle_url('/blocks/attendance_by_face/manage.php?cid=' . $courseid), get_string('attendance_already_given', 'block_attendance_by_face'), null, \core\output\notification::NOTIFY_ERROR);
+    if (block_attendance_status($courseid, $studentid, $sessionid)) {
+        redirect(new moodle_url('/blocks/attendance_by_face/manage.php?cid=' . $courseid),
+        get_string('attendance_already_given', 'block_attendance_by_face'), null, \core\output\notification::NOTIFY_ERROR);
     } else {
         block_student_attendance_update($courseid, $studentid, $sessionid);
-        redirect(new moodle_url('/blocks/attendance_by_face/manage.php?cid=' . $courseid), get_string('attendance_given', 'block_attendance_by_face'));
+        redirect(new moodle_url('/blocks/attendance_by_face/manage.php?cid=' . $courseid),
+        get_string('attendance_given', 'block_attendance_by_face'));
     }
 } else {
-    redirect(new moodle_url('/blocks/attendance_by_face/manage.php?cid=' . $courseid), get_string('attendance_error', 'block_attendance_by_face'), null, \core\output\notification::NOTIFY_ERROR);
+    redirect(new moodle_url('/blocks/attendance_by_face/manage.php?cid=' . $courseid),
+    get_string('attendance_error', 'block_attendance_by_face'), null, \core\output\notification::NOTIFY_ERROR);
 }

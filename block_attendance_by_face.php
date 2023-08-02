@@ -18,7 +18,7 @@
  * Block definition class for the block_attendance_by_face plugin.
  *
  * @package   block_attendance_by_face
- * @copyright 2023, Brain Station 23 
+ * @copyright 2023, Brain Station 23
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -52,22 +52,22 @@ class block_attendance_by_face extends block_base {
             $attendancedonetxt = get_string('attendance_done', 'block_attendance_by_face');
             $attendancebuttontxt = get_string('attendance_button', 'block_attendance_by_face');
             $attendancebuttontitle = get_string('attendance_button_title', 'block_attendance_by_face');
-            
+
             $this->content = new stdClass;
             $this->content->text = '<hr>';
-    
-            //$today = mktime(0, 0, 0, date("m"), date("d"), date("Y"));
+
             foreach ($courses as $course) {
-                $done = $DB->get_record("block_attendance_fc_recog", array('student_id' => $USER->id, 'course_id' => $course->cid, 'session_id' => $course->session_id));
+                $done = $DB->get_record("block_attendance_fc_recog",
+                array('student_id' => $USER->id, 'course_id' => $course->cid, 'session_id' => $course->session_id));
                 if (!$done) {
                     $this->content->text .= "
                     <div class='d-flex justify-content-between mb-3'>
                         <div class='d-flex align-items-center'>" . $course->fullname . "</div>
                         <div>
-                            <button 
-                                type='button' 
-                                id='" . $course->cid . "' 
-                                class='action-modal btn btn-primary' 
+                            <button
+                                type='button'
+                                id='" . $course->cid . "'
+                                class='action-modal btn btn-primary'
                                 title='". $attendancebuttontitle . "'>
                                 ". $attendancebuttontxt ."
                             </button>
@@ -75,23 +75,24 @@ class block_attendance_by_face extends block_base {
                     </div>
                     <hr>
                     ";
-                } 
+                }
             }
             $successmessage = get_config('block_attendance_by_face', 'successmessage');
             $failedmessage = get_config('block_attendance_by_face', 'failedmessage');
             $threshold = get_config('block_attendance_by_face', 'threshold');
             $modelurl = $CFG->wwwroot . '/blocks/attendance_by_face/thirdpartylibs/models';
             $this->page->requires->js("/blocks/attendance_by_face/amd/build/face-api.min.js", true);
-            $this->page->requires->js_call_amd('block_attendance_by_face/attendance_modal', 'init', array($USER->id, $successmessage, $failedmessage, $threshold, $modelurl));
+            $this->page->requires->js_call_amd('block_attendance_by_face/attendance_modal',
+            'init', array($USER->id, $successmessage, $failedmessage, $threshold, $modelurl));
         } else {
-            if(!$this->can_view()) {
+            if (!$this->can_view()) {
                 $this->content = get_string('no_permission', 'block_attendance_by_face');
                 return $this->content;
             }
 
             global $USER;
 
-            if(is_siteadmin()) {
+            if (is_siteadmin()) {
                 $courses = $this->get_all_visible_courses();
             } else {
                 $courses = $this->get_enrolled_courselist_as_teacher($USER->id);
@@ -113,7 +114,7 @@ class block_attendance_by_face extends block_base {
 
     /**
      * Checks that the user can view this block or not.
-     * 
+     *
      * @return boolean value true if can, false otherwise
      */
     public function can_view() {
@@ -123,10 +124,10 @@ class block_attendance_by_face extends block_base {
         $managerroleid = $DB->get_field('role', 'id', ['shortname' => 'manager']);
 
         $teachercap = $DB->record_exists('role_assignments', ['userid' => $USER->id, 'roleid' => $teacherroleid]);
-        $coursecreatorcap =  $DB->record_exists('role_assignments', ['userid' => $USER->id, 'roleid' => $coursecreatorroleid]);
+        $coursecreatorcap = $DB->record_exists('role_assignments', ['userid' => $USER->id, 'roleid' => $coursecreatorroleid]);
         $managercap = $DB->record_exists('role_assignments', ['userid' => $USER->id, 'roleid' => $managerroleid]);
 
-        if(is_siteadmin() || $teachercap || $managercap || $coursecreatorcap) {
+        if (is_siteadmin() || $teachercap || $managercap || $coursecreatorcap) {
             return true;
         } else {
             return false;
@@ -136,10 +137,10 @@ class block_attendance_by_face extends block_base {
     /**
      * Checks if the current user is an editing teacher in any of the courses.
      */
-    function block_is_student() {
+    public function block_is_student() {
         global $DB, $USER;
         $roleid = $DB->get_field('role', 'id', ['shortname' => 'student']);
-        return $DB->record_exists('role_assignments', ['userid' => $USER->id, 'roleid' => $roleid]); 
+        return $DB->record_exists('role_assignments', ['userid' => $USER->id, 'roleid' => $roleid]);
     }
 
     /**
@@ -147,7 +148,7 @@ class block_attendance_by_face extends block_base {
      */
     public function get_all_visible_courses() {
         global $DB;
-        $sql = "SELECT  c.id, c.fullname 
+        $sql = "SELECT  c.id, c.fullname
                 FROM {course} c
                 WHERE visible=1 AND c.id<>1";
         $courses = $DB->get_records_sql($sql);
@@ -167,7 +168,7 @@ class block_attendance_by_face extends block_base {
         return $courselist;
     }
 
-    function get_enrolled_courselist_with_active_window($userid) {
+    public function get_enrolled_courselist_with_active_window($userid) {
         global $DB;
         $sql = "SELECT c.fullname 'fullname', c.id 'cid', lpiu.session_id
                 FROM {role_assignments} r
@@ -181,17 +182,17 @@ class block_attendance_by_face extends block_base {
         return $courselist;
     }
 
-    function has_config() {
+    public function has_config() {
         return true;
     }
 
     /**
-     * 
+     *
      * Allow the block to have multiple instance
-     * 
+     *
      * @return bool
      */
-    function instance_allow_multiple() {
+    public function instance_allow_multiple() {
         return false;
     }
 
