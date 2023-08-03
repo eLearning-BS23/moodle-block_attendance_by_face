@@ -5,6 +5,27 @@ define(['jquery', 'core/ajax', 'core/str','core/modal_factory', 'core/notificati
           // Load the model.
           await faceapi.nets.ssdMobilenetv1.loadFromUri(modelurl);
 
+          let desc_webcam = ""; 
+
+          let start_webcam = "";
+
+          let submit_attendance = "";
+
+          let try_again = "";
+
+          let cancel = "";
+
+          let warning = "";
+
+          async function getMessages() {
+            desc_webcam = await str.get_string('desc_webcam', 'block_attendance_by_face');
+            start_webcam = await str.get_string('start_webcam', 'block_attendance_by_face');
+            submit_attendance = await str.get_string('submit_attendance', 'block_attendance_by_face');
+            try_again = await str.get_string('try_again', 'block_attendance_by_face');
+            cancel = await str.get_string('cancel', 'block_attendance_by_face');
+            warning = await str.get_string('warning_webcam', 'block_attendance_by_face');
+          }
+
           // Function to detect the face.
           var detectface = async function (input, croppedImage){
             const output = await faceapi.detectAllFaces(input);
@@ -52,46 +73,13 @@ define(['jquery', 'core/ajax', 'core/str','core/modal_factory', 'core/notificati
             .done(function (value) {
               st_img_url = value["image_url"];
               course_name = value["course_name"];
-              create_modal();
+              getMessages().then(() => {
+                console.log("Modal Messages are printed");
+                create_modal();
+              });
             })
             .fail(Notification.exception);
           // end of ajax call
-
-          let desc_webcam = ""; 
-
-          $.when(str.get_string('desc_webcam', 'block_attendance_by_face')).done(function (output) {
-            desc_webcam = output;
-          })
-
-          let start_webcam = "";
-
-          $.when(str.get_string('start_webcam', 'block_attendance_by_face')).done(function (output) {
-            start_webcam = output;
-          })
-
-          let submit_attendance = "";
-
-          $.when(str.get_string('submit_attendance', 'block_attendance_by_face')).done(function (output) {
-            submit_attendance = output;
-          })
-
-          let try_again = "";
-
-          $.when(str.get_string('try_again', 'block_attendance_by_face')).done(function (output) {
-            try_again = output;
-          })
-
-          let cancel = "";
-
-          $.when(str.get_string('cancel', 'block_attendance_by_face')).done(function (output) {
-            cancel = output;
-          })
-
-          let warning = "";
-
-          $.when(str.get_string('warning_webcam', 'block_attendance_by_face')).done(function (output) {
-            warning = output;
-          })
       
           let create_modal = () => {
             ModalFactory.create({
@@ -211,11 +199,11 @@ define(['jquery', 'core/ajax', 'core/str','core/modal_factory', 'core/notificati
                 Ajax.call([request])[0]
                   .done(function (value) {
                     let original_img_response = value["original_img_response"];
-                    window.console.log(original_img_response);
+                    //window.console.log(original_img_response);
                     let face_img_response = value["face_img_response"];
-                    window.console.log(face_img_response);
+                    //window.console.log(face_img_response);
                     let distance = value["distance"];
-                    window.console.log(distance);
+                    //window.console.log(distance);
       
                     if (distance != null && distance < threshold) {
                       let today = new Date();
