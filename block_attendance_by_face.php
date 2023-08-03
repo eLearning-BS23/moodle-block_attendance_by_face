@@ -46,7 +46,7 @@ class block_attendance_by_face extends block_base {
         }
 
         if ($this->block_is_student()) {
-            global $USER, $DB;
+            global $USER, $DB, $CFG;
             $courses = $this->get_enrolled_courselist_with_active_window($USER->id);
 
             $attendancedonetxt = get_string('attendance_done', 'block_attendance_by_face');

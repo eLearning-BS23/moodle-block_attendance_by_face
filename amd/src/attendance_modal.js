@@ -88,11 +88,7 @@ define(['jquery', 'core/ajax', 'core/str','core/modal_factory', 'core/notificati
               body: `
               <div>
               <p id='desc_webcam'> ` + desc_webcam + `
-              <i class="icon fa fa-exclamation-circle text-muted fa-fw" 
-                  title=" ` + warning + ` " role="img" 
-                  aria-label=" ` + warning + ` ">
-              </i>
-              </p>
+              </p><p> ` + warning + ` </p>
               </div>
               <video id="webcam" autoplay playsinline width="300" height="225" style="display:none;margin:auto"></video>
               <canvas id="canvas" class="d-none" style="display:none;"></canvas>
@@ -141,6 +137,7 @@ define(['jquery', 'core/ajax', 'core/str','core/modal_factory', 'core/notificati
               };
               let displayTryAgain = () => {
                 document.getElementById("try-again").style.display = "block";
+                console.log("TRY AGAIN");
               };
               let hideTryAgain = () => {
                 document.getElementById("try-again").style.display = "none";
@@ -178,7 +175,7 @@ define(['jquery', 'core/ajax', 'core/str','core/modal_factory', 'core/notificati
                   methodname: wsfunction,
                   args: params,
                 };
-                console.log(request);
+                
                 Ajax.call([request])[0]
                   .done(function () {
                     window.console.log("Attendance logged");
@@ -254,6 +251,11 @@ define(['jquery', 'core/ajax', 'core/str','core/modal_factory', 'core/notificati
       
                     $("#submit-attendance").on("click", function () {
                       removeMessages();
+
+                      document.getElementById('submit-attendance').disabled = true;
+                      document.getElementById('submit-attendance').innerText = "";
+                      document.getElementById('submit-attendance').innerHTML = "<div id='spinner' class='spinner-border spinner-border-sm' role='status'></div>";
+
                       if (!st_img) {
                         st_img = getDataUrl(studentimg);
                       }
@@ -293,9 +295,7 @@ define(['jquery', 'core/ajax', 'core/str','core/modal_factory', 'core/notificati
                       });
                     });
                     $("#try-again").on("click", function () {
-                      removeMessages();
-                      hideTryAgain();
-                      document.getElementById("submit-attendance").click();
+                      window.location.href = $(location).attr("href");
                     });
                   })
                   .catch((err) => {
