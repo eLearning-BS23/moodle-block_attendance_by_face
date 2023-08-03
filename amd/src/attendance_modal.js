@@ -203,7 +203,7 @@ define(['jquery', 'core/ajax', 'core/str','core/modal_factory', 'core/notificati
                     let face_img_response = value["face_img_response"];
                     //window.console.log(face_img_response);
                     let distance = value["distance"];
-                    //window.console.log(distance);
+                    window.console.log(distance);
       
                     if (distance != null && distance < threshold) {
                       let today = new Date();
