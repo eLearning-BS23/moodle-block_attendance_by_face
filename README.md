@@ -10,8 +10,8 @@
 <div align="center">
 
 [![Status](https://img.shields.io/badge/status-active-success.svg)]()
-[![GitHub Issues](https://img.shields.io/badge/issues-0-brightgreen)](https://github.com/Prosanto7/Block-Attendance/issues)
-[![GitHub Pull Requests](https://img.shields.io/badge/pull%20request-0-yellowgreen)](https://github.com/Prosanto7/Block-Attendance/pulls)
+[![GitHub Issues](https://img.shields.io/badge/issues-0-brightgreen)](https://github.com/eLearning-BS23/moodle-block_attendance_by_face/issues)
+[![GitHub Pull Requests](https://img.shields.io/badge/pull%20request-0-yellowgreen)](https://github.com/eLearning-BS23/moodle-block_attendance_by_face/pulls)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](/LICENSE)
 
 </div>
@@ -29,7 +29,7 @@ Welcome to the installation guide for <b>Attendance By Face</b>, block plugin. F
 
 ### Install by downloading the ZIP file
 
-- Download zip file from <a target="_blank" href="https://moodle.org/plugins/block_attendance_by_face">Moodle plugins directory</a> or <a target="_blank" href="https://github.com/Prosanto7/Block-Attendance">GitHub</a>.
+- Download zip file from <a target="_blank" href="https://moodle.org/plugins/block_attendance_by_face">Moodle plugins directory</a> or <a target="_blank" href="https://github.com/eLearning-BS23/moodle-block_attendance_by_face">GitHub</a>.
 
 - Unzip the zip file inside blocks folder of your moodle project directory.
 
@@ -56,7 +56,7 @@ cd {moodle folder}/blocks/
 
 and clone code by using following commands:
 ```
-git clone https://github.com/Prosanto7/Block-Attendance
+git clone https://github.com/eLearning-BS23/moodle-block_attendance_by_face
 ```
 
 ## ⚙️ Configuration
