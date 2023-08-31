@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<libraries>
+    <library>
+        <location>amd/build/face-api.js</location>
+        <name>face-api</name>
+        <license>Apache</license>
+        <version></version>
+        <licenseversion>2.0</licenseversion>
+    </library>
+    <library>
+        <location>thirdpartylibs/chosenjs/</location>
+        <name>harvesthq/chosen</name>
+        <license>MIT</license>
+        <version>1.8.7</version>
+        <licenseversion></licenseversion>
+    </library>
+    <library>
+        <location>thirdpartylibs/DataTables/</location>
+        <name>DataTables</name>
+        <license>MIT</license>
+        <version>1.12.1</version>
+        <licenseversion></licenseversion>
+    </library>
+    <library>
+        <location>thirdpartylibs/Date-Time-Picker-Bootstrap-4/</location>
+        <name>Datetimepicker for Bootstrap 3</name>
+        <license>MIT</license>
+        <version>4.17.47</version>
+        <licenseversion></licenseversion>
+    </library>
+    <library>
+        <location>thirdpartylibs/momentjs/</location>
+        <name>momentjs</name>
+        <license>MIT</license>
+        <version>2.29.4</version>
+        <licenseversion></licenseversion>
+    </library>
+</libraries>
