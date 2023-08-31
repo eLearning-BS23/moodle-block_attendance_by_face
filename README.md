@@ -12,7 +12,7 @@
 [![Status](https://img.shields.io/badge/status-active-success.svg)]()
 [![GitHub Issues](https://img.shields.io/badge/issues-0-brightgreen)](https://github.com/eLearning-BS23/moodle-block_attendance_by_face/issues)
 [![GitHub Pull Requests](https://img.shields.io/badge/pull%20request-0-yellowgreen)](https://github.com/eLearning-BS23/moodle-block_attendance_by_face/pulls)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](/LICENSE)
+[![License](https://img.shields.io/badge/license-GNU General Public License-blue.svg)](/LICENSE)
 
 </div>
 
