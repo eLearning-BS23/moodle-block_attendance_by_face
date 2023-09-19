@@ -24,6 +24,8 @@ define(['jquery', 'core/ajax', 'core/str','core/modal_factory', 'core/notificati
             try_again = await str.get_string('try_again', 'block_attendance_by_face');
             cancel = await str.get_string('cancel', 'block_attendance_by_face');
             warning = await str.get_string('warning_webcam', 'block_attendance_by_face');
+            exceeded_limit = await str.get_string('failedmessagetextlimitexceeded', 'block_attendance_by_face');
+            invalid_credentials = await str.get_string('failedmessageinvalidapi', 'block_attendance_by_face');
           }
 
           // Function to detect the face.
@@ -152,10 +154,10 @@ define(['jquery', 'core/ajax', 'core/str','core/modal_factory', 'core/notificati
                 hideSubmitAttendance();
                 displayMessage(successmessage, 1);
               };
-              let displayFailedMessage = () => {
+              let displayFailedMessage = (message) => {
                 hideSubmitAttendance();
                 displayTryAgain();
-                displayMessage(failedmessage, 0);
+                displayMessage(failedmessage + " " + message, 0);
               };
               let displayMessage = (message, flag) => {
                 var spn = document.createElement("span");
@@ -200,9 +202,10 @@ define(['jquery', 'core/ajax', 'core/str','core/modal_factory', 'core/notificati
                     let face_img_response = value["face_img_response"];
                     //window.console.log(face_img_response);
                     let distance = value["distance"];
+                    let status = value["status"];
                     window.console.log(distance);
       
-                    if (distance != null && distance < threshold) {
+                    if (status == 200 && distance < threshold) {
                       let today = new Date();
                       webcam.stop();
                       displaySuccessMessage();
@@ -219,6 +222,10 @@ define(['jquery', 'core/ajax', 'core/str','core/modal_factory', 'core/notificati
                         () => (window.location.href = $(location).attr("href")),
                         () => (window.location.href = $(location).attr("href"))
                       );
+                    } else if (status == 403) {
+                      displayFailedMessage(invalid_credentials);
+                    } else if (status == 429) {
+                      displayFailedMessage(exceeded_limit);
                     } else {
                       displayFailedMessage();
                     }
