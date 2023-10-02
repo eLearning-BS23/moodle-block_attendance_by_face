@@ -23,7 +23,7 @@
  */
 
 $string['pluginname'] = 'Attendance By Face';
-$string['courses'] = 'Available Courses';
+$string['courses'] = 'Available Courses as a teacher';
 $string['students'] = 'Students';
 $string['no_permission'] = 'You do not have enough permission to view this block';
 $string['manage_page_title'] = 'Student list';

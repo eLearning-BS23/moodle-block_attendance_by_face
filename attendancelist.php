@@ -37,7 +37,12 @@ if (!is_siteadmin() && !block_is_manager() && !block_is_coursecreator()  && !blo
 
 // Setting default value.
 global $USER;
-date_default_timezone_set($USER->timezone);
+// Setting default timezone.
+if ($USER->timezone == 99) { 
+    date_default_timezone_set($CFG->timezone);
+} else {
+    date_default_timezone_set($USER->timezone);
+}
 $d1 = mktime(0, 0, 0);
 $d2 = mktime(23, 59, 59);
 
