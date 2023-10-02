@@ -8,6 +8,6 @@ All notable changes to this project will be documented in this file.
 
 
 ### Bug Fix:
-- Fixed not showing available for teachers who are 
+- Fixed not showing **available courses** for teachers who are 
 enrolled to another course as a student.
-- Fixed default time zone problem when the time zone is not set by the user.
+- Fixed **default time zone** problem when the time zone is not set by the user.
