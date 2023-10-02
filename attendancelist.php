@@ -71,7 +71,11 @@ foreach ($studentdata as $key => $result) {
 
     if ($temp['time']) {
         // New Timezone Object.
-        $timezone = new DateTimeZone($USER->timezone);
+        if ($USER->timezone == 99) {
+            $timezone = new DateTimeZone($CFG->timezone);
+        } else {
+            $timezone = new DateTimeZone($USER->timezone);
+        }
 
         // Converting timestamp to date time format.
         $date = new DateTime('@'.$temp['time'], $timezone);

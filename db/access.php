@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $capabilities = array(
 
-    'block/block_attendance_by_face:myaddinstance' => array(
+    'block/attendance_by_face:myaddinstance' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => array(
@@ -37,7 +37,7 @@ $capabilities = array(
         'clonepermissionsfrom' => 'moodle/my:manageblocks'
     ),
 
-    'block/block_attendance_by_face:addinstance' => array(
+    'block/attendance_by_face:addinstance' => array(
         'riskbitmask' => RISK_SPAM | RISK_XSS,
 
         'captype' => 'write',

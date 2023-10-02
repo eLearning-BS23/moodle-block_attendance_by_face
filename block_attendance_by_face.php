@@ -39,22 +39,21 @@ class block_attendance_by_face extends block_base {
      * @return string The block HTML.
      */
     public function get_content() {
-        global $OUTPUT;
+        global $OUTPUT, $USER, $DB, $CFG;
 
         if ($this->content !== null) {
             return $this->content;
         }
 
+        $this->content = new stdClass;
+        $this->content->text = '<hr>';
+
         if ($this->block_is_student()) {
-            global $USER, $DB, $CFG;
             $courses = $this->get_enrolled_courselist_with_active_window($USER->id);
 
             $attendancedonetxt = get_string('attendance_done', 'block_attendance_by_face');
             $attendancebuttontxt = get_string('attendance_button', 'block_attendance_by_face');
             $attendancebuttontitle = get_string('attendance_button_title', 'block_attendance_by_face');
-
-            $this->content = new stdClass;
-            $this->content->text = '<hr>';
 
             foreach ($courses as $course) {
                 $done = $DB->get_record("block_attendance_fc_recog",
@@ -99,13 +98,7 @@ class block_attendance_by_face extends block_base {
             $this->page->requires->js("/blocks/attendance_by_face/amd/build/face-api.min.js", true);
             $this->page->requires->js_call_amd('block_attendance_by_face/attendance_modal',
             'init', array($USER->id, $successmessage, $failedmessage, $threshold, $modelurl));
-        } else {
-            if (!$this->can_view()) {
-                $this->content = get_string('no_permission', 'block_attendance_by_face');
-                return $this->content;
-            }
-
-            global $USER;
+        } 
 
             if (is_siteadmin()) {
                 $courses = $this->get_all_visible_courses();
@@ -113,16 +106,20 @@ class block_attendance_by_face extends block_base {
                 $courses = $this->get_enrolled_courselist_as_teacher($USER->id);
             }
 
-            $this->content = new stdClass();
-            $this->content->footer = '';
+            if (empty($courses)) {
+                $show_heading = false;
+            } else {
+                $show_heading = true;
+            }
 
             $templatecontext = [
                 'courses' => array_values($courses),
-                'url' => new moodle_url('/blocks/attendance_by_face/manage.php')
+                'url' => new moodle_url('/blocks/attendance_by_face/manage.php'),
+                'show_heading' => $show_heading
             ];
 
-            $this->content->text = $OUTPUT->render_from_template('block_attendance_by_face/pluginbody', $templatecontext);
-        }
+            $this->content->text .= $OUTPUT->render_from_template('block_attendance_by_face/pluginbody', $templatecontext);
+            $this->content->footer = '';
 
         return $this->content;
     }
