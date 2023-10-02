@@ -24,11 +24,18 @@ define(['jquery', 'core/ajax', 'core/str','core/modal_factory', 'core/notificati
             try_again = await str.get_string('try_again', 'block_attendance_by_face');
             cancel = await str.get_string('cancel', 'block_attendance_by_face');
             warning = await str.get_string('warning_webcam', 'block_attendance_by_face');
+            exceeded_limit = await str.get_string('failedmessagetextlimitexceeded', 'block_attendance_by_face');
+            invalid_credentials = await str.get_string('failedmessageinvalidapi', 'block_attendance_by_face');
+            invalid_upload_image = await str.get_string('failedmessagefaceimage', 'block_attendance_by_face');
+            invalid_webcam_image = await str.get_string('failedmessagewebcamimage', 'block_attendance_by_face');
           }
 
           // Function to detect the face.
           var detectface = async function (input, croppedImage){
             const output = await faceapi.detectAllFaces(input);
+            if (output[0] == null) {
+              return "";
+            }
             detections = output[0].box;
             let res = extractFaceFromBox(input, detections, croppedImage);
             return res;
@@ -152,10 +159,10 @@ define(['jquery', 'core/ajax', 'core/str','core/modal_factory', 'core/notificati
                 hideSubmitAttendance();
                 displayMessage(successmessage, 1);
               };
-              let displayFailedMessage = () => {
+              let displayFailedMessage = (message) => {
                 hideSubmitAttendance();
                 displayTryAgain();
-                displayMessage(failedmessage, 0);
+                displayMessage(failedmessage + message, 0);
               };
               let displayMessage = (message, flag) => {
                 var spn = document.createElement("span");
@@ -195,14 +202,11 @@ define(['jquery', 'core/ajax', 'core/str','core/modal_factory', 'core/notificati
       
                 Ajax.call([request])[0]
                   .done(function (value) {
-                    let original_img_response = value["original_img_response"];
-                    //window.console.log(original_img_response);
-                    let face_img_response = value["face_img_response"];
-                    //window.console.log(face_img_response);
                     let distance = value["distance"];
+                    let status = value["status"];
                     window.console.log(distance);
       
-                    if (distance != null && distance < threshold) {
+                    if (status == 200 && distance != null && distance < threshold) {
                       let today = new Date();
                       webcam.stop();
                       displaySuccessMessage();
@@ -219,8 +223,16 @@ define(['jquery', 'core/ajax', 'core/str','core/modal_factory', 'core/notificati
                         () => (window.location.href = $(location).attr("href")),
                         () => (window.location.href = $(location).attr("href"))
                       );
+                    } else if (status == 403) {
+                      displayFailedMessage(invalid_credentials);
+                    } else if (status == 429) {
+                      displayFailedMessage(exceeded_limit);
+                    } else if (status == 435) {
+                      displayFailedMessage(invalid_upload_image);
+                    } else if (status == 436) {
+                      displayFailedMessage(invalid_webcam_image);
                     } else {
-                      displayFailedMessage();
+                      displayFailedMessage("");
                     }
                   })
                   .fail(function (err) {
@@ -265,8 +277,8 @@ define(['jquery', 'core/ajax', 'core/str','core/modal_factory', 'core/notificati
                       let studentimgcrop = document.getElementById("st-image-cropped");
                       webcamimg.src = image;
                       async function a () {
-                        st_img = await detectface(webcamimg, webcamimgcrop);
-                        image = await detectface(studentimg, studentimgcrop);
+                        st_img = await detectface(studentimg, studentimgcrop);
+                        image = await detectface(webcamimg, webcamimgcrop);
                       };
                       a().then(() => {
                       //let request = getRequestForCheckingActiveWindowAPI(course_id);

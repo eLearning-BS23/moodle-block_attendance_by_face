@@ -37,7 +37,12 @@ if (!is_siteadmin() && !block_is_manager() && !block_is_coursecreator()  && !blo
 
 // Setting default value.
 global $USER;
-date_default_timezone_set($USER->timezone);
+// Setting default timezone.
+if ($USER->timezone == 99) { 
+    date_default_timezone_set($CFG->timezone);
+} else {
+    date_default_timezone_set($USER->timezone);
+}
 $d1 = mktime(0, 0, 0);
 $d2 = mktime(23, 59, 59);
 
@@ -71,7 +76,11 @@ foreach ($studentdata as $key => $result) {
 
     if ($temp['time']) {
         // New Timezone Object.
-        $timezone = new DateTimeZone($USER->timezone);
+        if ($USER->timezone == 99) {
+            $timezone = new DateTimeZone($CFG->timezone);
+        } else {
+            $timezone = new DateTimeZone($USER->timezone);
+        }
 
         // Converting timestamp to date time format.
         $date = new DateTime('@'.$temp['time'], $timezone);

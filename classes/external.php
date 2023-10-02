@@ -162,7 +162,18 @@ class block_attendance_by_face_student_image extends external_api {
     }
 
     public static function face_recognition_api($studentimg, $webcampicture) {
-        global $CFG;
+        if ($studentimg == "") {
+            return [
+                'status' => 435,
+                'distance' => null
+            ];
+        }
+        if ($webcampicture == "") {
+            return [
+                'status' => 436,
+                'distance' => null
+            ];
+        }
         $studentimg = str_replace('data:image/png;base64,', '', $studentimg);
         $webcampicture = str_replace('data:image/png;base64,', '', $webcampicture);
 
@@ -195,14 +206,14 @@ class block_attendance_by_face_student_image extends external_api {
         ]);
 
         $similarityresult = curl_exec($curl);
+        $httpStatus = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 
         curl_close($curl);
 
         $response = json_decode($similarityresult);
 
         $output = array(
-            'original_img_response' => $studentimg,
-            'face_img_response' => $webcampicture,
+            'status' => $httpStatus,
             'distance' => $response->body->distance
         );
 
@@ -212,8 +223,7 @@ class block_attendance_by_face_student_image extends external_api {
     public static function face_recognition_api_returns() {
         return new external_single_structure(
             array(
-                'original_img_response' => new external_value(PARAM_RAW, 'updated or failed', VALUE_OPTIONAL),
-                'face_img_response' => new external_value(PARAM_RAW, 'updated or failed', VALUE_OPTIONAL),
+                'status' => new external_value(PARAM_INT, 'updated or failed', VALUE_OPTIONAL),
                 'distance' => new external_value(PARAM_TEXT, 'distance value', VALUE_OPTIONAL)
             )
         );

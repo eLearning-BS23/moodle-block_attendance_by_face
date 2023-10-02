@@ -23,7 +23,7 @@
  */
 
 $string['pluginname'] = 'Attendance By Face';
-$string['courses'] = 'Available Courses';
+$string['courses'] = 'Available Courses as a teacher';
 $string['students'] = 'Students';
 $string['no_permission'] = 'You do not have enough permission to view this block';
 $string['manage_page_title'] = 'Student list';
@@ -69,6 +69,10 @@ $string['successmessagetextdefault'] = 'Your attendance is taken successfully!';
 $string['failedmessagetext'] = 'Failed Attendance Message';
 $string['failedmessagelongtext'] = 'Failed message text after a failed attendance attempt';
 $string['failedmessagetextdefault'] = 'Unable to take your attendance';
+$string['failedmessagetextlimitexceeded'] = '. API Service Limit Exceeded';
+$string['failedmessageinvalidapi'] = '. Invalid API Credentials';
+$string['failedmessagefaceimage'] = '. Face not found in uploaded image';
+$string['failedmessagewebcamimage'] = '. Face not found in webcam';
 $string['setting:bs_api'] = 'BS Service API';
 $string['setting:bs_apidesc'] = 'BS service api endpoint.';
 $string['setting:bs_api_key'] = 'BS API Key';
